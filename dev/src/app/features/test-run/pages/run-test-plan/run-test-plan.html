@@ -1,0 +1,185 @@
+@let testCase = testCases[testCasePosition];
+
+@if (ready) {
+<div>
+    <div style="font-size: 24px; font-weight: bold;">{{ title }}</div>
+
+    <div class="mt-20" style="display: flex; justify-content: flex-end; align-items: center; gap: 20px;">
+        <div>
+            <app-duration-counter [startTime]="createdAt"></app-duration-counter>
+        </div>
+        <button nz-button nzType="primary" (click)="onSubmit()">Submit</button>
+    </div>
+
+    <div class="mt-10" style="height: 5px; position: relative; background-color: #f0f0f0; border-radius: 15px;">
+        <div style="position: absolute; left: 0; top: 0; bottom: 0; background-color: green; border-radius: 15px;" [ngStyle]="{ width: getPercentage() + '%' }"></div>
+    </div>
+
+    <div class="mt-20">
+        <div><b>{{testCase.feature.name}}</b></div>
+
+        <div>{{testCase.name}}</div>
+
+        @if (testCase.description) {
+        <app-test-case-description [description]="testCase.description"></app-test-case-description>
+        }
+
+        <div style="display: flex; gap: 40px;" class="mt-20">
+            @if (testCase.stepsToTest.length) {
+            <div class="test-step-container">
+                <b>👉 Steps to Test</b>
+
+                <div class="test-step-content mt-10">
+                @for (step of testCase.stepsToTest; track step._id) {
+                <div class="test-step-item">{{ step.description }}</div>
+                }
+                </div>
+            </div>
+            }
+
+            <div style="flex: 1">
+                <b>🔨 Edge Cases</b>
+
+                <nz-list>
+                    @for (edgeCase of testCase.edgeCases; track edgeCase) {
+                    <nz-list-item style="display: flex;">
+                        <div style="flex: 1;">
+                            <div>
+                                <b><small>If</small></b>: {{edgeCase.title}}<br/>
+                                <div class="mt-5">
+                                    <b><small>Expected Result</small></b>:<br/>{{edgeCase.expectation}}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            @if (edgeCase.stepsToReproduce?.length) {
+                            <button nz-button><nz-icon nzType="unordered-list" nzTheme="outline" (click)="showStepsToReproduceModal(edgeCase)"></nz-icon></button>
+                            }
+
+                            @if (edgeCase.comment) {
+                            <button nz-button><nz-icon nzType="comment" nzTheme="outline" (click)="showEdgeCaseCommentModal(edgeCase)"></nz-icon></button>
+                            }
+
+                            @if (edgeCase.attachments?.length) {
+                            <nz-badge [nzCount]="edgeCase.attachments.length">
+                                <button nz-button><nz-icon nzType="file-image" nzTheme="outline" (click)="showEdgeCaseAttachmentModal(edgeCase)" /></button>
+                            </nz-badge>
+                            }
+
+                            <button nz-button nz-dropdown nzTrigger="click" [nzDropdownMenu]="edgeCaseDropdown"
+                                [ngClass]="edgeCase.status ? 'status ' + edgeCase.status : ''"
+                            >
+                                @let statusName = getStatusNameByValue(edgeCase.status);
+                                {{statusName ?? 'Options' }}
+                                <nz-icon nzType="more" nzTheme="outline" />
+                            </button>
+                            <nz-dropdown-menu #edgeCaseDropdown="nzDropdownMenu">
+                                <ul nz-menu>
+                                    <li nz-submenu [nzTitle]="'Mark as'">
+                                        <ul>
+                                            <li nz-menu-item (click)="edgeCase.status = null">None</li>
+                                            @for (status of statuses; track status) {
+                                            <li nz-menu-item (click)="edgeCase.status = status.value">{{status.name}}</li>
+                                            }
+                                        </ul>
+                                    </li>
+                                    <li nz-menu-item (click)="showEdgeCaseCommentModal(edgeCase)">Add Comment</li>
+                                    <li nz-menu-item (click)="showStepsToReproduceModal(edgeCase)">Add Steps to Reproduce</li>
+                                    <li nz-menu-item (click)="showEdgeCaseAttachmentModal(edgeCase)">Attach Images</li>
+                                </ul>
+                            </nz-dropdown-menu>
+                        </div>
+                    </nz-list-item>
+                    }
+                </nz-list>
+
+                <!-- @if (!showCommentArea) {
+                <div style="margin-top: 40px; display: flex; gap: 10px;">
+                    <button nz-button (click)="showCommentArea = true">
+                        <i nz-icon nzType="comment"></i>
+                        Add a Comment
+                    </button>
+
+                    <nz-upload [nzFileList]="attachedFiles" [nzCustomRequest]="uploadAttachments">
+                        <button nz-button>
+                            <nz-icon nzType="upload" />
+                            Upload Images
+                        </button>
+                    </nz-upload>
+                </div>
+                }
+
+                <div *ngIf="showCommentArea" class="comment-area" nz-form [nzLayout]="'vertical'">
+                    <nz-form-item>
+                        <nz-form-label>Add Comment</nz-form-label>
+                        <nz-form-control>
+                            <textarea nz-input rows="5" [(ngModel)]="testCase.comment"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>Add Attachment</nz-form-label>
+                        <nz-form-control>
+                            <nz-upload [nzFileList]="attachedFiles" [nzCustomRequest]="uploadAttachments">
+                                <button nz-button>
+                                    <nz-icon nzType="upload" />
+                                    Click to Upload
+                                </button>
+                            </nz-upload>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div> -->
+            </div>
+        </div>
+
+        <!-- <div style="margin-top: 20px;">
+            <nz-radio-group [(ngModel)]="testCase.status" nzSize="small">
+                @for (status of statuses; track status) {
+                <label nz-radio-button [nzValue]="status.value">{{status.name}}</label>
+                }
+            </nz-radio-group>
+        </div> -->
+    </div>
+
+    <div style="display: flex; justify-content: space-between;" class="mt-40">
+        <button nz-button (click)="onPrevClick()" [disabled]="!canGoPrev()">Prev</button>
+        <button nz-button (click)="onNextClick()" [disabled]="!canGoNext()">Next</button>
+    </div>
+</div>
+}
+
+<nz-modal [(nzVisible)]="edgeCaseCommentModalVisible" (nzOnCancel)="hideEdgeCaseCommentModal()" (nzOnOk)="saveEdgeCaseComment()" nzOkText="Save">
+    <ng-container *nzModalContent>
+        <textarea nz-input [(ngModel)]="edgeCaseComment" rows="12"></textarea>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="edgeCaseAttachmentModalVisible" (nzOnCancel)="hideEdgeCaseAttachmentModal()" (nzOnOk)="hideEdgeCaseAttachmentModal()">
+    <ng-container *nzModalContent>
+        <nz-upload nzType="drag" [nzMultiple]="true" [nzFileList]="edgeCaseAttachments" [nzCustomRequest]="uploadEdgeCaseAttachments" nzListType="picture-card">
+            <p class="ant-upload-drag-icon">
+                <nz-icon nzType="inbox" />
+            </p>
+            <p class="ant-upload-text">Click or drag image to this area to upload</p>
+        </nz-upload>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="stepsToReproduceModalVisible" (nzOnCancel)="hideStepsToReproduceModal()" (nzOnOk)="saveStepsToReproduce()"
+    nzHeader="Steps to Reproduce"
+>
+    <ng-container *nzModalContent>
+        <div [formGroup]="stepsForm" style="display: grid; grid-template-columns: 1fr 33px; column-gap: 15px; row-gap: 20px;">
+            @for (stepControl of $any(stepsForm.get('steps')).controls; track stepControl; let index=$index) {
+            <textarea nz-input rows="2" [formControl]="stepControl.get('step')"></textarea>
+            <button nz-button (click)="deleteStepInput(index)">
+                <nz-icon nzType="delete"></nz-icon>
+            </button>
+            }
+        </div>
+        <button nz-button (click)="addStepInput()" style="width: 100%;" class="mt-20">
+            <nz-icon nzType="plus"></nz-icon>
+            Add Step
+        </button>
+    </ng-container>
+</nz-modal>

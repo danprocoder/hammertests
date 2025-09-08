@@ -1,0 +1,84 @@
+/* You can add global styles to this file, and also import other style files */
+@import "ng-zorro-antd/ng-zorro-antd.min.css";
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+
+html,
+body {
+    font-family: 'Open Sans';
+}
+
+.source-code-pro {
+    font-family: 'Source Code Pro';
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.status {
+    &.passed {
+        color: #FFFFFF;
+        background-color: #2E8540;
+    }
+
+    &.passed-with-warnings {
+        color: #000000;
+        background-color: #FACC15;
+    }
+
+    &.needs-a-retest {
+        color: #FFFFFF;
+        background-color: #2563EB;
+    }
+
+    &.skipped {
+        color: #FFFFFF;
+        background-color: #4B5563;
+    }
+
+    &.failed {
+        color: #FFFFFF;
+        background-color: #DC2626;
+    }
+}
+
+// TODO: Move this to CDN
+$spacings: 5, 10, 20, 40, 80;
+
+@each $s in $spacings {
+    .mt-#{$s} {
+        margin-top: #{$s}px;
+    }
+
+    .pl-#{$s} {
+        padding-left: #{$s}px;
+    }
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+
+    &-column {
+        display: flex;
+        flex-direction: column;
+
+        @each $s in $spacings {
+        &.gap-#{$s} {
+            gap: #{$s}px;
+        }
+        }
+    }
+
+    @each $s in $spacings {
+    &.gap-#{$s} {
+        gap: #{$s}px;
+    }
+    }
+}

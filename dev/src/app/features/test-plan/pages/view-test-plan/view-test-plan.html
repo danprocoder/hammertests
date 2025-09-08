@@ -1,0 +1,60 @@
+<h2>{{ plan?.name }}</h2>
+
+<div class="flex gap-10">
+    <a nz-button [routerLink]="'/dashboard/start/' + planId" nzType="primary">
+        <i nz-icon nzType="caret-right"></i>
+        Start Test
+    </a>
+    <a nz-button [routerLink]="'/dashboard/edit/' + planId">Edit</a>
+</div>
+
+<div class="mt-40">
+    <nz-collapse [nzBordered]="false">
+        @for (feature of features; track feature) {
+            <nz-collapse-panel [nzHeader]="header">
+                <ng-template #header>
+                    <div class="flex" style="justify-content: space-between;">
+                        <span>{{ feature.name }}</span>
+                        {{ feature.testCases?.length }} test cases
+                    </div>
+                </ng-template>
+
+                @if (feature.testCases && feature.testCases.length > 0) {
+                <div class="flex-column gap-40">
+                    @for (testCase of feature.testCases; track testCase) {
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600;">
+                            🔨 TEST CASE: {{testCase.name}}
+                        </div>
+
+                        <div class="flex gap-40 mt-20">
+                            <!-- steps to test -->
+                            <div class="flex-column gap-10" style="width: 300px">
+                                @for (step of testCase.stepsToTest; track step._id; let index = $index) {
+                                <div class="flex gap-5">{{index + 1}}. <div>{{ step.description }}</div></div>
+                                }
+                            </div>
+
+                            <!-- edge cases -->
+                            <nz-list style="flex: 1;">
+                                <nz-list-item class="p-0">
+                                    <div class="flex-column gap-10 pl-20">
+                                        @for (edgeCase of testCase.edgeCases; track edgeCase._id) {
+                                        <div style="display: grid; grid-template-columns: 25px 50px 1fr; row-gap:5px">
+                                            <span style="grid-row: span 2;">-></span>
+                                            <b>If:</b> <span class="source-code-pro">{{edgeCase.title}}</span>
+                                            <b>Then:</b> <span class="source-code-pro">{{edgeCase.expectation}}</span>
+                                        </div>
+                                        }
+                                    </div>
+                                </nz-list-item>
+                            </nz-list>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </nz-collapse-panel>
+        }
+    </nz-collapse>
+</div>

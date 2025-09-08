@@ -1,0 +1,11 @@
+<div style="width: 100%;display: flex;align-items: center;justify-content: flex-end;">
+  <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu">
+    <img [src]="user.picture" style="width: 30px; height: 30px; border-radius: 50%;" />
+    {{user.firstName}}
+  </a>
+  <nz-dropdown-menu #userMenu="nzDropdownMenu">
+    <ul nz-menu>
+      <li nz-menu-item>Logout</li>
+    </ul>
+  </nz-dropdown-menu>
+</div>

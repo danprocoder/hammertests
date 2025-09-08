@@ -1,0 +1,61 @@
+<ng-container *ngIf="plan">
+    <div>
+        <h3>{{ plan.name }}</h3>
+        <div>{{ plan.description }}</div>
+    </div>
+
+    <form nz-form nzLayout="vertical" [formGroup]="formGroup" style="display: flex; flex-direction: column; gap: 20px; width: 500px; margin-top: 40px;">
+        <nz-form-item>
+            <nz-form-label>Test Environment</nz-form-label>
+            <nz-form-control>
+                <nz-select formControlName="environment" style="width: 120px;">
+                    @for (env of plan.environments; track env._id) {
+                    <nz-option [nzValue]="env._id" [nzLabel]="env.name"></nz-option>
+                    }
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+        <!-- <nz-form-item style="display: flex; flex-direction: column; gap: 5px;">
+            <nz-form-label>Test Variables</nz-form-label>
+            <div *ngFor="let group of $any(formGroup.get('variables')).controls; let i = index" style="display: flex; flex-direction: row; gap: 5px;">
+                <input nz-input type="text" [formControl]="group.get('key')" style="flex: 1;" />
+                <input nz-input type="text" [formControl]="group.get('value')" style="flex: 1;" />
+                <button nz-button (click)="removeVariable(i)" style="width: 30px;">
+                    <i nz-icon nzType="delete"></i>
+                </button>
+            </div>
+            <div style="margin-top: 10px;">
+                <button nz-button (click)="addVariableField()">Add Variable</button>
+            </div>
+        </nz-form-item> -->
+
+        <nz-form-item>
+            <nz-form-label>Modules/Features to Test</nz-form-label>
+            <nz-form-control>
+                <nz-select formControlName="modules" style="width: 200px;">
+                    <nz-option nzValue="all" nzLabel="All Features"></nz-option>
+                    <nz-option nzValue="selected" nzLabel="Selected Features"></nz-option>
+                </nz-select>
+            </nz-form-control>
+
+            <div style="margin-top: 20px;" *ngIf="$any(formGroup.get('modules')).value === 'selected'">
+                <div>
+                    <input nz-input type="text" [(ngModel)]="searchText" style="width: 100%;" [ngModelOptions]="{standalone: true}" />
+                </div>
+                <nz-checkbox-group style="display: grid; grid-template-columns: 1fr 1fr 1fr;row-gap: 10px;">
+                    @for (item of getFiltered(); track item._id) {
+                        <label nz-checkbox [nzValue]="item._id" [formControl]="item.control">{{ item.name }}</label>
+                    }
+                </nz-checkbox-group>
+            </div>
+        </nz-form-item>
+
+        <div>
+            <button nz-button nzType="primary" (click)="startTest()" [disabled]="!formGroup.valid">
+                Start
+                <i nz-icon nzType="caret-right"></i>
+            </button>
+        </div>
+    </form>
+</ng-container>

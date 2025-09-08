@@ -1,0 +1,28 @@
+<h2>Test Run History</h2>
+
+<nz-table #table [nzData]="results">
+    <thead>
+        <tr>
+            <th *ngIf="!planId">Plan</th>
+            <th>Duration</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (row of table.data; track row) {
+        <tr>
+            <td *ngIf="!planId">{{ row.plan.name }}</td>
+            <td>{{ getDuration(row) }}</td>
+            <td>{{ row.result.totalPassed }}</td>
+            <td>{{ row.result.totalFailed }}</td>
+            <td>{{ row.createdAt | date: 'dd MMM, yyyy H:MM' }}</td>
+            <td>
+                <a [routerLink]="'/dashboard/run/result/' + row._id">View Result</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</nz-table>

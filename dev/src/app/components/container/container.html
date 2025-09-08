@@ -1,0 +1,36 @@
+<nz-layout style="min-height: 100vh;">
+  <nz-sider>
+    <div style="height: 64px; padding-left: 15px; display: flex; align-items: center;">
+      <a routerLink="/dashboard">Hammertests</a>
+    </div>
+    
+    <ul nz-menu nzTheme="dark">
+      <li nz-menu-item routerLink="/dashboard" nzIcon="dashboard">
+        <i nz-icon nzType="dashboard"></i>
+        Dashboard
+      </li>
+      <li nz-menu-item routerLink="/dashboard" nzIcon="tool">
+        <i nz-icon nzType="tool"></i>
+        Test Plan
+      </li>
+      <li nz-menu-item routerLink="/dashboard/run/history" nzIcon="history">
+        <i nz-icon nzType="history"></i>
+        Test Run History
+      </li>
+    </ul>
+  </nz-sider>
+
+  <nz-layout>
+    <nz-header>
+      <app-navbar></app-navbar>
+    </nz-header>
+
+    <nz-content style="padding: 20px;">
+      <nz-card>
+        <router-outlet></router-outlet>
+      </nz-card>
+    </nz-content>
+
+    <nz-footer>Footer</nz-footer>
+  </nz-layout>
+</nz-layout>

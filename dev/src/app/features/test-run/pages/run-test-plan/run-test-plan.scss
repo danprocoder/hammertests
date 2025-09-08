@@ -1,0 +1,23 @@
+.test-step {
+    &-container {
+        width: 300px;
+    }
+
+    &-content {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    &-item {
+        padding: 10px;
+        background: #f9f9f9;
+    }
+}
+
+.comment-area {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 20px;
+}

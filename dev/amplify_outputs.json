@@ -1,0 +1,50 @@
+{
+  "auth": {
+    "user_pool_id": "eu-west-2_y0s01EA0l",
+    "aws_region": "eu-west-2",
+    "user_pool_client_id": "51f7k8m5p1iff8hujdabed4nlb",
+    "identity_pool_id": "eu-west-2:446f695c-7aa8-4716-88ab-2e51580ac1e1",
+    "mfa_methods": [],
+    "standard_required_attributes": [
+      "email"
+    ],
+    "username_attributes": [
+      "email"
+    ],
+    "user_verification_types": [
+      "email"
+    ],
+    "groups": [],
+    "mfa_configuration": "NONE",
+    "password_policy": {
+      "min_length": 8,
+      "require_lowercase": true,
+      "require_numbers": true,
+      "require_symbols": true,
+      "require_uppercase": true
+    },
+    "unauthenticated_identities_enabled": true
+  },
+  "storage": {
+    "aws_region": "eu-west-2",
+    "bucket_name": "amplify-dev-danie-sandbox-9-qahelperbucket989149b6-sgcfqi6srkkm",
+    "buckets": [
+      {
+        "name": "qa-helper",
+        "bucket_name": "amplify-dev-danie-sandbox-9-qahelperbucket989149b6-sgcfqi6srkkm",
+        "aws_region": "eu-west-2",
+        "paths": {
+          "public/*": {
+            "guest": [
+              "write",
+              "get",
+              "list",
+              "delete"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "version": "1.4"
+}

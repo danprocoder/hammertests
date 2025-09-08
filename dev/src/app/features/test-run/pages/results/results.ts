@@ -23,7 +23,7 @@ export class Results {
   totalRun = 0;
   passed = 0;
   failed = 0;
-  skipped = 0;
+  blocked = 0;
 
   selectedTestCase: any = null;
   selectedComment: any = null;
@@ -44,7 +44,7 @@ export class Results {
       this.totalRun = getTestRun.result.totalRun;
       this.passed = getTestRun.result.totalPassed;
       this.failed = getTestRun.result.totalFailed;
-      this.skipped = this.total - this.totalRun;
+      this.blocked = this.total - this.totalRun;
     });
   }
 

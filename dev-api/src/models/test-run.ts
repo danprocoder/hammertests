@@ -1,6 +1,30 @@
-import { model, Schema, Document } from 'mongoose';
+import { model, Schema, Document, Types } from 'mongoose';
 
-const testRunSchema = new Schema({
+export interface ITestRun {
+  project: Types.ObjectId,
+  user: Types.ObjectId,
+  planId: Types.ObjectId,
+  environment: Types.ObjectId,
+  stat: {
+    totalPassed: number,
+    totalFailed: number,
+    totalBlocked: number,
+    totalRun: number
+  },
+  status: 'running' | 'finished',
+  finishedAt: Date,
+  variables: { key: string, value: string }[],
+  modulesToTest: Types.ObjectId[]
+}
+
+export interface ITestRunDocument extends ITestRun, Document {}
+
+const testRunSchema = new Schema<ITestRunDocument>({
+  project: {
+    type: Schema.Types.ObjectId,
+    ref: 'Project',
+    required: true
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -15,7 +39,7 @@ const testRunSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true
   },
-  result: {
+  stat: {
     totalPassed: {
       type: Number,
       default: 0
@@ -24,7 +48,7 @@ const testRunSchema = new Schema({
       type: Number,
       default: 0
     },
-    total: {
+    totalBlocked: {
       type: Number,
       default: 0
     },
@@ -36,9 +60,6 @@ const testRunSchema = new Schema({
   status: {
     type: String,
     default: 'running'
-  },
-  overallReport: {
-    type: String
   },
   finishedAt: {
     type: Schema.Types.Date

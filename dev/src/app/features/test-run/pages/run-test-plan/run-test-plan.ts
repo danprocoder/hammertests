@@ -72,7 +72,7 @@ export class RunTestPlan {
     { value: 'passed', name: 'Passed' },
     { value: 'passed-with-warnings', name: 'Passed with Warnings' },
     { value: 'needs-a-retest', name: 'Needs a Retest' },
-    { value: 'skipped', name: 'Skipped' },
+    { value: 'blocked', name: 'Blocked' },
     { value: 'failed', name: 'Failed' },
   ];
 

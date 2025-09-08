@@ -12,6 +12,7 @@ export const startTestRunMutator = async (parent: any, args: any, { user }: IReq
 
   const { planId, environment, variables, modulesToTest } = args;
   const testRun = await TestRun.create({
+    project: user.project._id,
     user: user.user._id,
     planId,
     environment,

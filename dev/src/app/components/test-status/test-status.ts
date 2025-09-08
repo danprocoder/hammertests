@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
   styleUrl: './test-status.scss'
 })
 export class TestStatus {
-  @Input() status: 'passed' | 'passed-with-warnings' | 'needs-a-retest' | 'skipped' | 'failed' | undefined;
+  @Input() status: 'passed' | 'passed-with-warnings' | 'needs-a-retest' | 'blocked' | 'failed' | undefined;
 
   getText(): string | undefined {
     return this.status?.replaceAll('-', ' ');

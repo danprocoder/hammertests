@@ -1,6 +1,6 @@
 import { Document, Model, model, Schema, Types } from "mongoose";
 
-type TestCaseStatus = 'passed' | 'passed-with-warnings' | 'needs-a-retest' | 'skipped' | 'failed';
+type TestCaseStatus = 'passed' | 'passed-with-warnings' | 'needs-a-retest' | 'blocked' | 'failed';
 
 interface IStepToReproduce {
   step: string;
@@ -9,7 +9,10 @@ interface IStepToReproduce {
 interface IStepToReproduceDocument extends IStepToReproduce, Document {}
 
 const StepToReproduceSchema = new Schema<IStepToReproduceDocument>({
-  step: { type: String, required: true }
+  step: {
+    type: String,
+    required: true
+  }
 });
 
 interface ITestRunEdgeCase {
@@ -31,7 +34,7 @@ const testRunEdgeCaseSchema = new Schema<ITestRunEdgeCaseDocument>({
   status: {
     type: String,
     required: true,
-    enum: ['passed', 'passed-with-warnings', 'needs-a-retest', 'skipped', 'failed']
+    enum: ['passed', 'passed-with-warnings', 'needs-a-retest', 'blocked', 'failed']
   },
   comment: {
     type: String

@@ -1,45 +1,40 @@
 import mongoose from "mongoose";
 import { TestCase, TestRunCase, TestRun, TestPlan } from "@qa/models";
 
-export const markTestRunAsFinishedMutator = async (parent: any, { planId, testRunId }: any) => {
-  const total = await TestCase.countDocuments({ planId });
-  const pipeline = [
+export const updateTestRunStats = async (testRun: any) => {
+  const edgeCases = await TestRunCase.aggregate([
     {
       $match: {
-        planId: new mongoose.Types.ObjectId(planId),
-        testRunId: new mongoose.Types.ObjectId(testRunId)
+        testRunId: testRun._id,
+      }
+    },
+    {
+      $unwind: {
+        path: '$edgeCases'
       }
     },
     {
       $group: {
-        _id: '$status',
-        total: {
-          $sum: 1
-        }
+        _id: '$edgeCases.status',
+        count: { $sum: 1 }
       }
     }
-  ];
-  const aggregateResult = await TestRunCase.aggregate(pipeline).exec();
+  ]).exec();
+  console.log(edgeCases);
+}
 
-  let totalRun = 0, totalPassed = 0, totalFailed = 0;
-  aggregateResult.forEach((res: any) => {
-    if (res._id !== 'skipped') {
-      totalRun += res.total;
-    }
+export const markTestRunAsFinishedMutator = async (parent: any, { planId, testRunId }: any) => {
+  const testRun = await TestRun.find({ planId, testRunId });
 
-    if (res._id === 'passed') {
-      totalPassed = res.total;
-    } else if (res._id === 'failed') {
-      totalFailed = res.total;
-    }
-  });
+  await updateTestRunStats(testRun);
+
   await TestRun.findOneAndUpdate({ planId, _id: testRunId }, {
     status: 'finished',
-    result: {
-      total,
-      totalRun,
-      totalPassed,
-      totalFailed
+    stat: {
+      totalRun: 0,
+      totalPassed: 0,
+      totalFailed: 0,
+      totalBlocked: 0
     },
     finishedAt: new Date()
   });

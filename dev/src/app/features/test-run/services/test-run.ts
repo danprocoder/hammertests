@@ -11,7 +11,7 @@ const statusColors: { [key: string]: string } = {
   'failed': 'DC2626',
   'passed': '2E8540',
   'passed-with-warnings': 'FACC15',
-  'skipped': '4B5563',
+  'blocked': '4B5563',
   'needs-a-retest': '2563EB'
 };
 

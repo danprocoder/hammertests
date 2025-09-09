@@ -1,4 +1,4 @@
-interface ITestRunEdgeCase {
+export interface ITestRunEdgeCase {
   edgeCaseId: IEdgeCase;
   status: string;
   attachments?: string[];
@@ -6,18 +6,24 @@ interface ITestRunEdgeCase {
   comment?: string;
 }
 
-interface ITestRunStepToReproduce {
+export interface ITestRunStepToReproduce {
   _id?: string;
   step: string;
 }
 
-interface ITestRun {
+export interface ITestRunstat {
+  totalPassed: number,
+  totalFailed: number,
+  totalBlocked: number,
+  totalNeedsARetest: number,
+  totalPassedWithWarnings: number,
+  totalRun: number
+}
+
+export interface ITestRun {
   _id: string;
   planId: string;
-  result: {
-    totalPassed: number;
-    totalFailed: number;
-  };
+  stat: ITestRunstat;
   status: 'running' | 'completed';
   testCases: ITestRunCase[];
   overallReport?: string;
@@ -25,7 +31,7 @@ interface ITestRun {
   dateCreated?: string;
 }
 
-interface ITestRunCase {
+export interface ITestRunCase {
   _id?: string;
   testCaseId: string;
   edgeCases: ITestRunEdgeCase[];

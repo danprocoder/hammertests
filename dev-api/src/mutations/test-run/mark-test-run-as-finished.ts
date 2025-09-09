@@ -1,11 +1,12 @@
-import mongoose from "mongoose";
-import { TestCase, TestRunCase, TestRun, TestPlan } from "@qa/models";
+import { TestRunCase, TestRun, TestPlan } from "@qa/models";
+import { ITestRunstat } from "@qa/models/test-run";
+import { Types } from "mongoose";
 
-export const updateTestRunStats = async (testRun: any) => {
-  const edgeCases = await TestRunCase.aggregate([
+export const updateTestRunCaseStats = async (_id: Types.ObjectId): Promise<ITestRunstat> => {
+  const pipeline = [
     {
       $match: {
-        testRunId: testRun._id,
+        testRunId: _id,
       }
     },
     {
@@ -16,26 +17,55 @@ export const updateTestRunStats = async (testRun: any) => {
     {
       $group: {
         _id: '$edgeCases.status',
-        count: { $sum: 1 }
+        count: {
+          $sum: 1
+        }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        statuses: {
+          $push: { k: '$_id', v: '$count'}
+        },
+        total: { $sum: "$count" }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        stat: {
+          $arrayToObject: '$statuses'
+        },
+        total: 1
       }
     }
-  ]).exec();
-  console.log(edgeCases);
+  ];
+  const edgeCases = await TestRunCase.aggregate(pipeline).exec();
+
+  const res = edgeCases[0];
+  return {
+    totalPassed: res.stat.passed,
+    totalFailed: res.stat.failed,
+    totalBlocked: res.stat.blocked,
+    totalNeedsARetest: res.stat['needs-a-retest'],
+    totalPassedWithWarnings: res.stat['passed-with-warnings'],
+    totalRun: res.total
+  };
+
 }
 
 export const markTestRunAsFinishedMutator = async (parent: any, { planId, testRunId }: any) => {
-  const testRun = await TestRun.find({ planId, testRunId });
+  const testRun = await TestRun.findOne({ planId, _id: testRunId });
+  if (!testRun) {
+    throw new Error('Testrun was not found');
+  }
 
-  await updateTestRunStats(testRun);
+  const stat = await updateTestRunCaseStats(testRun._id as any);
 
-  await TestRun.findOneAndUpdate({ planId, _id: testRunId }, {
+  await testRun.updateOne({
+    stat,
     status: 'finished',
-    stat: {
-      totalRun: 0,
-      totalPassed: 0,
-      totalFailed: 0,
-      totalBlocked: 0
-    },
     finishedAt: new Date()
   });
 

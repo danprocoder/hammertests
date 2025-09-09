@@ -1,16 +1,20 @@
 import { model, Schema, Document, Types } from 'mongoose';
 
+export interface ITestRunstat {
+  totalPassed: number,
+  totalFailed: number,
+  totalBlocked: number,
+  totalNeedsARetest: number,
+  totalPassedWithWarnings: number,
+  totalRun: number
+}
+
 export interface ITestRun {
   project: Types.ObjectId,
   user: Types.ObjectId,
   planId: Types.ObjectId,
   environment: Types.ObjectId,
-  stat: {
-    totalPassed: number,
-    totalFailed: number,
-    totalBlocked: number,
-    totalRun: number
-  },
+  stat: ITestRunstat,
   status: 'running' | 'finished',
   finishedAt: Date,
   variables: { key: string, value: string }[],
@@ -52,6 +56,14 @@ const testRunSchema = new Schema<ITestRunDocument>({
       type: Number,
       default: 0
     },
+    totalNeedsARetest: {
+      type: Number,
+      default: 0
+    },
+    totalPassedWithWarnings: {
+      type: Number,
+      default: 0
+    },
     totalRun: {
       type: Number,
       default: 0
@@ -74,4 +86,4 @@ const testRunSchema = new Schema<ITestRunDocument>({
   }]
 }, { timestamps: true });
 
-export const TestRun = model('TestRun', testRunSchema, 'testruns');
+export const TestRun = model<ITestRunDocument>('TestRun', testRunSchema, 'testruns');

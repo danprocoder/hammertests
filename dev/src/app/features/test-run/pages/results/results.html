@@ -1,25 +1,23 @@
 <div *ngIf="result">
-    <div style="font-size: 24px; font-weight: bold;">{{ result.plan.name }}</div>
+    <div style="font-size: 24px; font-weight: bold;">{{ result.plan?.name }}</div>
 
-    <div style="display: flex; gap: 20px; margin-top: 10px;">
-        <span><b>({{ totalRun }}/{{ total }})</b> Test Cases Run</span>
-        <span><b>({{ blocked }}/{{ total }})</b> Blocked </span>
-        <span><b>({{ passed }}/{{ total }})</b> Passed {{ percentagePassed() }}% </span>
-        <span><b>({{ failed }}/{{ total }})</b> Failed  {{ percentageFailed() }}%</span>
+    <div class="mt-40">
+        <canvas #pieChartCanvas width="450" height="220"></canvas>
     </div>
 
-    <div style="margin-top: 20px;">
+    <div class="mt-20">
         <button nz-button (click)="exportAsExcel()">
             <span nz-icon nzType="download" nzTheme="outline"></span>
             Export
         </button>
     </div>
 
-    <nz-table #table [nzData]="tableTestResults" style="margin-top: 20px;">
+    <nz-table #table [nzData]="tableTestResults" class="mt-20">
         <thead>
             <tr>
                 <th>Test</th>
                 <th>Edge Case</th>
+                <th>Expected Result</th>
                 <th>Status</th>
                 <th>&nbsp;</th>
             </tr>
@@ -27,7 +25,7 @@
         <tbody>
         @for (result of table.data; track result) {
             <tr>
-                <td [rowSpan]="result.edgeCases.length + 1">
+                <td [rowSpan]="result.edgeCases.length + 1" style="vertical-align: top;">
                     <a (click)="showDetails(result)">
                         {{ result.feature.name }}
                         &mdash;
@@ -37,13 +35,11 @@
             </tr>
             @for(edgeCase of result.edgeCases; track edgeCase._id) {
             <tr>
-                <td style="padding-left: 32px;">
-                    <div>
-                        <i>Edgecase:</i><br/>{{ edgeCase.edgeCaseId.title }}
-                    </div>
-                    <div style="margin-top: 10px;">
-                        <i>Expected Result:</i><br/>{{ edgeCase.edgeCaseId.expectation }}
-                    </div>
+                <td class="source-code-pro">
+                    {{ edgeCase.edgeCaseId.title }}
+                </td>
+                <td class="source-code-pro">
+                    {{ edgeCase.edgeCaseId.expectation }}
                 </td>
                 <td>
                     <app-test-status [status]="edgeCase.status"></app-test-status>

@@ -1,5 +1,7 @@
 import { GraphQLError } from 'graphql';
-import { IRequestContext, TestCase, TestRunCase } from "@qa/models";
+import { IRequestContext, TestCase, TestRun, TestRunCase } from "@qa/models";
+import { updateTestRunCaseStats } from './mark-test-run-as-finished';
+import { Types } from 'mongoose';
 
 export const editTestRunCaseMutator = async (parent: any, args: any, req: IRequestContext) => {
   if (!req.user) {
@@ -40,6 +42,9 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
       edgeCases: testRunCase.edgeCases
     });
   }
+
+  const stat = await updateTestRunCaseStats(new Types.ObjectId(testRunId));
+  await TestRun.updateOne({ _id: testRunId }, { stat });
 
   return runTc;
 };

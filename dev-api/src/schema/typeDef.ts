@@ -67,15 +67,17 @@ const typeDefs = gql`
     environment: String,
     variables: [TestRunVariableInput],
     modulesToTest: [String],
-    result: TestRunResultInput,
+    stat: TestRunResultInput,
     status: String,
     testCases: [TestRunCaseInput]
   }
   
   input TestRunResultInput {
     totalPassed: Int,
-    totalFailed: Int
-    total: Int,
+    totalFailed: Int,
+    totalBlocked: Int,
+    totalNeedsARetest: Int,
+    totalPassedWithWarnings: Int,
     totalRun: Int
   }
 
@@ -84,7 +86,7 @@ const typeDefs = gql`
     planId: String,
     plan: TestPlan,
     environment: String,
-    result: TestRunResult,
+    stat: TestRunResult,
     modulesToTest: [String],
     status: String,
     testCases: [TestRunCase],
@@ -110,8 +112,10 @@ const typeDefs = gql`
 
   type TestRunResult {
     totalPassed: Int,
-    totalFailed: Int
-    total: Int,
+    totalFailed: Int,
+    totalBlocked: Int,
+    totalNeedsARetest: Int,
+    totalPassedWithWarnings: Int,
     totalRun: Int
   }
 

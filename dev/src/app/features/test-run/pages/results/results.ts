@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { TestRun } from '@qa/test-run/services/test-run';
 import { ActivatedRoute } from '@angular/router';
 import { getUrl } from '@aws-amplify/storage';
 import { TestFeature } from '@qa/test-plan/services/test-feature';
 import { NzImage, NzImageService } from 'ng-zorro-antd/image';
+import { Chart, PieController } from 'chart.js/auto';
+import { ITestRun } from '../../../../models/test-run.model';
+
+Chart.register(PieController);
 
 @Component({
   selector: 'app-results',
@@ -13,8 +17,7 @@ import { NzImage, NzImageService } from 'ng-zorro-antd/image';
 })
 export class Results {
   resultId = '';
-
-  result: any;
+  result?: ITestRun & { plan: ITestPlan };
   testResults: any[] = [];
   tableTestResults: any[] = [];
   filterStatus = 'all';
@@ -28,7 +31,9 @@ export class Results {
   selectedTestCase: any = null;
   selectedComment: any = null;
 
-  constructor(private resultsService: TestRun, private route: ActivatedRoute, private testFeature: TestFeature, private nzImageService: NzImageService) {
+  @ViewChild('pieChartCanvas', { static: false }) pieChartCanvas?: ElementRef<HTMLCanvasElement>;
+
+  constructor(private resultsService: TestRun, private route: ActivatedRoute, private testFeature: TestFeature, private nzImageService: NzImageService, private cdr: ChangeDetectorRef) {
     this.route.params.subscribe(param => {
       this.resultId = param['id'];
     });
@@ -39,12 +44,70 @@ export class Results {
       this.result = getTestRun;
       this.testResults = getTestRun.testCases;
       this.tableTestResults = [...new Set(getTestRun.testCases)];
-
-      this.total = getTestRun.result.total;
-      this.totalRun = getTestRun.result.totalRun;
-      this.passed = getTestRun.result.totalPassed;
-      this.failed = getTestRun.result.totalFailed;
       this.blocked = this.total - this.totalRun;
+        this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.showChart();
+
+      }, 250);
+    });
+  }
+
+  showChart(): void {
+    const stat = this.result?.stat!;
+
+    const chart = new Chart(this.pieChartCanvas?.nativeElement!, {
+      type: 'pie',
+      data: {
+        labels: [
+          `Passed: ${this.result?.stat.totalPassed}`,
+          `Passed with Warnings: ${this.result?.stat.totalPassedWithWarnings}`,
+          `Failed: ${this.result?.stat.totalFailed}`,
+          `Blocked: ${this.result?.stat.totalBlocked}`,
+          `Needs a Retest: ${this.result?.stat.totalNeedsARetest}`
+        ],
+        datasets: [
+          {
+            label: 'Votes',
+            data: [
+              stat.totalPassed,
+              stat.totalPassedWithWarnings,
+              stat.totalFailed,
+              stat.totalBlocked,
+              stat.totalNeedsARetest
+            ],
+            backgroundColor: [
+              '#2E8540',
+              '#FACC15',
+              '#DC2626',
+              '#4B5563',
+              '#2563EB'
+            ]
+          }
+        ]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const value = Number(ctx.raw);
+                return ctx.label.split(':')[0] + ':' + Math.round((value / stat.totalRun) * 100) + '%'
+              }
+            }
+          },
+          legend: {
+            position: 'right',
+            fullSize: false,
+            labels: {
+              padding: 15
+            }
+          }
+        }
+      }
     });
   }
 

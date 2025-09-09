@@ -6,6 +6,7 @@ import { ApolloQueryResult } from '@apollo/client';
 import ExcelJs from 'exceljs';
 import { saveAs } from 'file-saver';
 import { format as dateFormat } from 'date-fns';
+import { ITestRunCase, ITestRunStepToReproduce } from '../../../models/test-run.model';
 
 const statusColors: { [key: string]: string } = {
   'failed': 'DC2626',
@@ -88,10 +89,13 @@ export class TestRun {
             __args: { query },
             _id: true,
             plan: { name: true },
-            result: {
-              total: true,
+            stat: {
+              totalRun: true,
               totalPassed: true,
-              totalFailed: true
+              totalFailed: true,
+              totalBlocked: true,
+              totalNeedsARetest: true,
+              totalPassedWithWarnings: true
             },
             createdAt: true,
             finishedAt: true
@@ -117,10 +121,12 @@ export class TestRun {
             _id,
             name
           },
-          result {
+          stat {
             totalPassed,
-            totalFailed
-            total,
+            totalFailed,
+            totalBlocked,
+            totalNeedsARetest,
+            totalPassedWithWarnings,
             totalRun
           },
           testCases {

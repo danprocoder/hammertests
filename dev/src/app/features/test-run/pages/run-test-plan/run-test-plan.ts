@@ -7,6 +7,7 @@ import { uploadData, getUrl } from '@aws-amplify/storage';
 import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { Observable } from 'rxjs';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ITestRunCase, ITestRunEdgeCase } from '../../../../models/test-run.model';
 
 interface IDisplayTestRunEdgeCase extends IEdgeCase, Required<Pick<ITestRunEdgeCase, 'attachments' | 'stepsToReproduce' | 'comment'>> {
   status: string | null;
@@ -395,7 +396,6 @@ export class RunTestPlan {
   }
 
   saveTestCaseResult(): Observable<any> {
-    console.log(this.getPayload());
     return this.runTestService.save(this.planId, this.testRunId, this.getPayload());
   }
 }

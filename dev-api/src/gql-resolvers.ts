@@ -27,7 +27,7 @@ const resolvers = {
     deleteTestPlan: deleteTestPlanMutator,
     startTestRun: startTestRunMutator,
     editTestRunCase: editTestRunCaseMutator,
-    markTestRunAsFinished: markTestRunAsFinishedMutator
+    markTestRunAsFinished: markTestRunAsFinishedMutator,
   }
 };
 

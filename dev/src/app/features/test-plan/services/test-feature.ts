@@ -117,4 +117,12 @@ export class TestFeature {
       }`
     });
   }
+
+  deletePlan(planId: string): Observable<MutationResult<any>> {
+    return this.apollo.mutate({
+      mutation: gql`mutation {
+        deleteTestPlan(id: "${planId}")
+      }`
+    });
+  }
 }

@@ -3,7 +3,7 @@
     <a nz-button routerLink="/dashboard/create">Create Test Plan</a>
 </div>
 
-<nz-table #table [nzData]="plans" style="margin-top: 20px;">
+<nz-table #table [nzData]="plans" class="mt-20">
     <thead>
         <tr>
             <th>Name</th>
@@ -14,7 +14,7 @@
         </tr>
     </thead>
     <tbody>
-        @for (plan of table.data; track plan) {
+        @for (plan of table.data; track plan._id) {
             <tr>
                 <td>
                     <a [routerLink]="'/dashboard/view/' + plan._id">{{plan.name}}</a>
@@ -22,13 +22,13 @@
                 <td>{{plan.description}}</td>
                 <td>{{ plan.numberOfTestCases }}</td>
                 <td>
-                @if (plan.currentTestRun) {
+                    @if (plan.currentTestRun) {
                     <a [routerLink]="'/dashboard/run/' + plan._id + '/' + plan.currentTestRun._id">
                         Test started at {{ plan.currentTestRun.createdAt | date: 'dd MMM, yyyy H:MM' }}
                     </a>
-                } @else if (plan.lastTestRun) {
+                    } @else if (plan.lastTestRun) {
                     <a [routerLink]="'/dashboard/run/result/' + plan.lastTestRun._id">Last Test Result</a>
-                }
+                    }
                 </td>
                 <td>
                     <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
@@ -47,6 +47,10 @@
                             </li>
                             <li nz-menu-item [routerLink]="'/dashboard/run/history/' + plan._id">
                                 Test Run History
+                            </li>
+                            <li nz-menu-item nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete this test plan?"
+                                (nzOnConfirm)="deletePlan(plan)">
+                                Delete
                             </li>
                         </ul>
                     </nz-dropdown-menu>

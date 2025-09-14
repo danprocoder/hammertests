@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { TestFeature } from '@qa/test-plan/services/test-feature';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 interface IFormGroup {
   environment: FormControl<string | null>,
@@ -28,6 +29,7 @@ type CheckBoxItem = {
   imports: [
     NzSelectModule,
     NzInputModule,
+    NzIconModule,
     ReactiveFormsModule,
     NzButtonModule,
     NzFormModule,
@@ -66,7 +68,6 @@ export class StartTestRun {
   ngOnInit(): void {
     this.featureService.getPlan(this.planId).subscribe((res) => {
       this.plan = res.data.testPlan;
-      console.log(this.plan);
       this.sortedFeatures = [...this.plan.features].sort((a: any, b: any) => a.name.localeCompare(b.name));
 
       const moduleIds = this.formGroup.get('moduleIds') as IFormGroup['moduleIds'];

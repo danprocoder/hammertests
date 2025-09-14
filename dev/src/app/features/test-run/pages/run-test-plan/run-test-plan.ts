@@ -2,15 +2,15 @@ import { Component } from '@angular/core';
 import { TestFeature } from '@qa/test-plan/services/test-feature';
 import { TestRun } from '@qa/test-run/services/test-run';
 import { ActivatedRoute, Router } from '@angular/router';
-import { from, switchMap } from 'rxjs';
+import { from, map, switchMap, tap } from 'rxjs';
 import { uploadData, getUrl } from '@aws-amplify/storage';
 import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { Observable } from 'rxjs';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ITestRunCase, ITestRunEdgeCase } from '../../../../models/test-run.model';
+import { ITestRunCase, ITestRunEdgeCase, TestStatus } from '../../../../models/test-run.model';
 
 interface IDisplayTestRunEdgeCase extends IEdgeCase, Required<Pick<ITestRunEdgeCase, 'attachments' | 'stepsToReproduce' | 'comment'>> {
-  status: string | null;
+  status: TestStatus | null;
 }
 
 interface IDisplayTestRunCase {
@@ -69,12 +69,18 @@ export class RunTestPlan {
     steps: new FormArray<any>([])
   });
 
-  statuses = [
-    { value: 'passed', name: 'Passed' },
-    { value: 'passed-with-warnings', name: 'Passed with Warnings' },
-    { value: 'needs-a-retest', name: 'Needs a Retest' },
-    { value: 'blocked', name: 'Blocked' },
-    { value: 'failed', name: 'Failed' },
+  edgeCaseIssueModalVisible = false;
+
+  statuses: {
+    icon: string,
+    value: TestStatus,
+    name: string
+  }[] = [
+    { icon: '✅', value: 'passed', name: 'Passed' },
+    { icon: '⚠️', value: 'passed-with-warnings', name: 'Passed with Warnings' },
+    { icon: '❌', value: 'needs-a-retest', name: 'Needs a Retest' },
+    { icon: '🚫', value: 'blocked', name: 'Blocked' },
+    { icon: '🔄', value: 'failed', name: 'Failed' },
   ];
 
   constructor(
@@ -122,7 +128,7 @@ export class RunTestPlan {
                     if (!savedEdgeCase) {
                       return {
                         ...edgeCase,
-                        status: '',
+                        status: null,
                         comment: '',
                         stepsToReproduce: [],
                         attachments: []
@@ -156,6 +162,8 @@ export class RunTestPlan {
               return [...prev, ...mapped];
             }, [] as IDisplayTestRunCase[]);
 
+          console.log(this.testCases);
+
           const lastUnsavedIndex = this.testCases.findIndex((tc: any) => !tc.edgeCases.every((edgeCase: any) => !!edgeCase.status));
           this.testCasePosition = lastUnsavedIndex >= 0 ? lastUnsavedIndex : 0;
           this.setSelectedTestCase();
@@ -164,6 +172,38 @@ export class RunTestPlan {
       });
     });
   }
+
+  get stat() {
+    const stat = {
+      passed: 0,
+      'passed-with-warnings': 0,
+      failed: 0,
+      blocked: 0,
+      'needs-a-retest': 0
+    };
+
+    this.testCases.forEach((testCase) => {
+      testCase.edgeCases.forEach((ec) => {
+        if (ec.status) {
+          stat[ec.status] += 1;
+        }
+      });
+    });
+
+    return stat;
+  }
+
+  // TODO: leave this for now as somethings need to be refactored
+  // getTestRun() {
+  //   return this.runTestService.getTestRun(this.testRunId)
+  //     .pipe(
+  //       map(({ data: { getTestRun } }) => {
+  //         this.testRun = getTestRun;
+
+  //         return getTestRun;
+  //       })
+  //     );
+  // }
 
   getFilteredFeatures(features: ITestFeature[]): ITestFeature[] {
     if (!this.testRun.modulesToTest.length) {
@@ -174,126 +214,141 @@ export class RunTestPlan {
 
   getPercentage(): number {
     let totalSaved = 0;
+    let totalEdgeCases = 0;
+
     this.testCases.forEach((tc: any) => {
-      if (tc.edgeCases.length && tc.edgeCases.every((edgeCase: any) => !!edgeCase.status)) {
-        totalSaved++;
-      }
+      tc.edgeCases.forEach((ec: any) => {
+        if (ec.status) {
+          totalSaved++;
+        }
+
+        totalEdgeCases++;
+      });
     });
 
-    return (totalSaved / this.testCases.length) * 100;
+    return (totalSaved / totalEdgeCases) * 100;
   }
 
   setSelectedTestCase(): void {
     this.currentDisplayedTestCase = this.testCases[this.testCasePosition];
   }
 
+  showEdgeCaseIssueModal(edgeCase: IDisplayTestRunEdgeCase): void {
+    this.selectedEdgeCase = edgeCase;
+    this.edgeCaseIssueModalVisible = true;
+  }
+
+  onEdgeCaseIssueUpdated(updatedIssue: any): void {
+    console.log('Updated Issue', updatedIssue);
+  }
+
   /********************** STEPS TO REPRODUCE **********************/
 
-  showStepsToReproduceModal(edgeCase: IDisplayTestRunEdgeCase): void {
-    this.selectedEdgeCase = edgeCase;
-    this.stepsToReproduceModalVisible = true;
+  // showStepsToReproduceModal(edgeCase: IDisplayTestRunEdgeCase): void {
+  //   this.selectedEdgeCase = edgeCase;
+  //   this.stepsToReproduceModalVisible = true;
 
-    const array = this.stepsForm.get('steps') as FormArray;
-    edgeCase.stepsToReproduce .forEach((step) => {
-      array.push(new FormGroup({
-        ...(step._id ? { _id: new FormControl(step._id) } : {}),
-        step: new FormControl(step.step)
-      }))
-    });
-  }
+  //   const array = this.stepsForm.get('steps') as FormArray;
+  //   edgeCase.stepsToReproduce .forEach((step) => {
+  //     array.push(new FormGroup({
+  //       ...(step._id ? { _id: new FormControl(step._id) } : {}),
+  //       step: new FormControl(step.step)
+  //     }))
+  //   });
+  // }
 
-  hideStepsToReproduceModal(): void {
-    this.stepsToReproduceModalVisible = false;
-    (this.stepsForm.get('steps') as FormArray).clear();
-  }
+  // hideStepsToReproduceModal(): void {
+  //   this.stepsToReproduceModalVisible = false;
+  //   (this.stepsForm.get('steps') as FormArray).clear();
+  // }
 
-  addStepInput(): void {
-    (this.stepsForm.get('steps') as FormArray).push(new FormGroup({
-      step: new FormControl('', [Validators.required])
-    }));
-  }
+  // addStepInput(): void {
+  //   (this.stepsForm.get('steps') as FormArray).push(new FormGroup({
+  //     step: new FormControl('', [Validators.required])
+  //   }));
+  // }
 
-  deleteStepInput(index: number): void {
-    (this.stepsForm.get('steps') as FormArray).removeAt(index);
-  }
+  // deleteStepInput(index: number): void {
+  //   (this.stepsForm.get('steps') as FormArray).removeAt(index);
+  // }
 
-  saveStepsToReproduce(): void {
-    this.selectedEdgeCase.stepsToReproduce = [...this.stepsForm.get('steps')?.value];
+  // saveStepsToReproduce(): void {
+  //   this.selectedEdgeCase.stepsToReproduce = [...this.stepsForm.get('steps')?.value];
 
-    this.hideStepsToReproduceModal();
-  }
+  //   this.hideStepsToReproduceModal();
+  // }
 
-  showEdgeCaseCommentModal(edgeCase: any): void {
-    this.selectedEdgeCase = edgeCase;
-    this.edgeCaseComment = this.selectedEdgeCase.comment;
-    this.edgeCaseCommentModalVisible = true;
-  }
+  // showEdgeCaseCommentModal(edgeCase: any): void {
+  //   this.selectedEdgeCase = edgeCase;
+  //   this.edgeCaseComment = this.selectedEdgeCase.comment;
+  //   this.edgeCaseCommentModalVisible = true;
+  // }
 
-  hideEdgeCaseCommentModal(): void {
-    this.edgeCaseCommentModalVisible = false;
-    this.edgeCaseComment = null;
-    this.selectedEdgeCase = null;
-  }
+  // hideEdgeCaseCommentModal(): void {
+  //   this.edgeCaseCommentModalVisible = false;
+  //   this.edgeCaseComment = null;
+  //   this.selectedEdgeCase = null;
+  // }
 
-  saveEdgeCaseComment(): void {
-    this.selectedEdgeCase.comment = this.edgeCaseComment;
-    this.hideEdgeCaseCommentModal();
-  }
+  // saveEdgeCaseComment(): void {
+  //   this.selectedEdgeCase.comment = this.edgeCaseComment;
+  //   this.hideEdgeCaseCommentModal();
+  // }
 
-  showEdgeCaseAttachmentModal(edgeCase: any): void {
-    this.selectedEdgeCase = edgeCase;
-    this.edgeCaseAttachmentModalVisible = true;
+  // showEdgeCaseAttachmentModal(edgeCase: any): void {
+  //   this.selectedEdgeCase = edgeCase;
+  //   this.edgeCaseAttachmentModalVisible = true;
 
-    edgeCase.attachments?.forEach((path: any) => {
-      getUrl({
-        path,
-        options: { expiresIn: 3600 }
-      }).then((res: any) => {
-        const filename = res.url.href.split('/').pop();
-        this.edgeCaseAttachments.push({
-          uid: filename,
-          name: filename,
-          url: res.url.href
-        })
-      });
-    });
-  }
+  //   edgeCase.attachments?.forEach((path: any) => {
+  //     getUrl({
+  //       path,
+  //       options: { expiresIn: 3600 }
+  //     }).then((res: any) => {
+  //       const filename = res.url.href.split('/').pop();
+  //       this.edgeCaseAttachments.push({
+  //         uid: filename,
+  //         name: filename,
+  //         url: res.url.href
+  //       })
+  //     });
+  //   });
+  // }
 
-  hideEdgeCaseAttachmentModal(): void {
-    this.selectedEdgeCase.attachments = [...this.edgeCaseAttachments.map(attachment => {
-      if (!attachment.url?.startsWith('public/')) {
-        const url = new URL(attachment.url!);
-        return url.pathname.replace(/^\/public\//, 'public/');
-      }
-      return attachment.url;
-    })];
-    this.edgeCaseAttachmentModalVisible = false;
-    this.edgeCaseAttachments = [];
-    this.selectedEdgeCase = null;
-  }
+  // hideEdgeCaseAttachmentModal(): void {
+  //   this.selectedEdgeCase.attachments = [...this.edgeCaseAttachments.map(attachment => {
+  //     if (!attachment.url?.startsWith('public/')) {
+  //       const url = new URL(attachment.url!);
+  //       return url.pathname.replace(/^\/public\//, 'public/');
+  //     }
+  //     return attachment.url;
+  //   })];
+  //   this.edgeCaseAttachmentModalVisible = false;
+  //   this.edgeCaseAttachments = [];
+  //   this.selectedEdgeCase = null;
+  // }
 
-  uploadEdgeCaseAttachments = (req: NzUploadXHRArgs) => {
-    const fileName = `${Math.floor(Math.random() * 1000000)}.jpg`;
-    const path = `public/plan_${this.planId}/test_run_${this.testRunId}/edgeCase_${this.selectedEdgeCase._id}_${fileName}`;
-    const { result } = uploadData({
-      path,
-      data: req.file as any,
-      options: {
-        contentType: req.file.type,
-        bucket: 'qa-helper',
-        onProgress: ({ transferredBytes, totalBytes }: any) => {
-          const percent = (transferredBytes / totalBytes) * 100;
-          req.onProgress?.({ percent }, req.file);
-        }
-      }
-    });
+  // uploadEdgeCaseAttachments = (req: NzUploadXHRArgs) => {
+  //   const fileName = `${Math.floor(Math.random() * 1000000)}.jpg`;
+  //   const path = `public/plan_${this.planId}/test_run_${this.testRunId}/edgeCase_${this.selectedEdgeCase._id}_${fileName}`;
+  //   const { result } = uploadData({
+  //     path,
+  //     data: req.file as any,
+  //     options: {
+  //       contentType: req.file.type,
+  //       bucket: 'qa-helper',
+  //       onProgress: ({ transferredBytes, totalBytes }: any) => {
+  //         const percent = (transferredBytes / totalBytes) * 100;
+  //         req.onProgress?.({ percent }, req.file);
+  //       }
+  //     }
+  //   });
 
-    return from(result)
-      .subscribe((res: any) => {
-        this.edgeCaseAttachments.push({ uid: fileName, name: fileName, url: res.path });
-        req.onSuccess?.({ key: res.path }, req.file, res);
-      }, (err: any) => req.onError?.(err, req.file));
-  }
+  //   return from(result)
+  //     .subscribe((res: any) => {
+  //       this.edgeCaseAttachments.push({ uid: fileName, name: fileName, url: res.path });
+  //       req.onSuccess?.({ key: res.path }, req.file, res);
+  //     }, (err: any) => req.onError?.(err, req.file));
+  // }
 
   getStatusNameByValue(value: any): string {
     const status =  this.statuses.find((status: any) => status.value === value);

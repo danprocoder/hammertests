@@ -2,25 +2,26 @@ import { Document, Model, model, Schema, Types } from "mongoose";
 
 type TestCaseStatus = 'passed' | 'passed-with-warnings' | 'needs-a-retest' | 'blocked' | 'failed';
 
-interface IStepToReproduce {
-  step: string;
-}
+// interface IStepToReproduce {
+//   step: string;
+// }
 
-interface IStepToReproduceDocument extends IStepToReproduce, Document {}
+// interface IStepToReproduceDocument extends IStepToReproduce, Document {}
 
-const StepToReproduceSchema = new Schema<IStepToReproduceDocument>({
-  step: {
-    type: String,
-    required: true
-  }
-});
+// const StepToReproduceSchema = new Schema<IStepToReproduceDocument>({
+//   step: {
+//     type: String,
+//     required: true
+//   }
+// });
 
 interface ITestRunEdgeCase {
   edgeCaseId: Types.ObjectId,
   status: TestCaseStatus,
-  comment?: string,
-  attachments?: string[],
-  stepsToReproduce?: IStepToReproduce[]
+  issue?: Types.ObjectId,
+  // comment?: string,
+  // attachments?: string[],
+  // stepsToReproduce?: IStepToReproduce[]
 }
 
 interface ITestRunEdgeCaseDocument extends ITestRunEdgeCase, Document {}
@@ -34,15 +35,19 @@ const testRunEdgeCaseSchema = new Schema<ITestRunEdgeCaseDocument>({
   status: {
     type: String,
     required: true,
-    enum: ['passed', 'passed-with-warnings', 'needs-a-retest', 'blocked', 'failed']
+    enum: ['passed', 'passed-with-warnings', 'needs-a-retest', 'blocked', 'failed'] as TestCaseStatus[]
   },
-  comment: {
-    type: String
+  issue: {
+    type: Schema.Types.ObjectId,
+    ref: 'Issue'
   },
-  attachments: [{
-    type: String
-  }],
-  stepsToReproduce: [StepToReproduceSchema]
+  // comment: {
+  //   type: String
+  // },
+  // attachments: [{
+  //   type: String
+  // }],
+  // stepsToReproduce: [StepToReproduceSchema]
 });
 
 interface ITestRunCase {

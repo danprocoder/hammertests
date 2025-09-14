@@ -1,6 +1,9 @@
+
+export type TestStatus = 'passed' | 'passed-with-warnings' | 'failed' | 'blocked' | 'needs-a-retest';
+
 export interface ITestRunEdgeCase {
   edgeCaseId: IEdgeCase;
-  status: string;
+  status: TestStatus;
   attachments?: string[];
   stepsToReproduce?: ITestRunStepToReproduce[];
   comment?: string;

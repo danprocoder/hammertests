@@ -2,18 +2,30 @@
 
 @if (ready) {
 <div>
-    <div style="font-size: 24px; font-weight: bold;">{{ title }}</div>
+    <nz-affix>
+        <div style="background: white; padding-bottom: 10px;">
+            <div style="font-size: 24px; font-weight: bold;">{{ title }}</div>
 
-    <div class="mt-20" style="display: flex; justify-content: flex-end; align-items: center; gap: 20px;">
-        <div>
-            <app-duration-counter [startTime]="createdAt"></app-duration-counter>
+            <div class="flex-space-between mt-20" style="align-items: center; gap: 20px;">
+                <div class="flex gap-20">
+                    @for (status of statuses; track status.value) {
+                    <span>{{ status.icon }} {{ status.name }}: <b>{{ stat[status.value] }}</b></span>
+                    }
+                </div>
+                <div class="flex gap-20">
+                    <div>
+                        <app-duration-counter [startTime]="createdAt"></app-duration-counter>
+                    </div>
+                    <button nz-button nzType="primary" (click)="onSubmit()">Submit</button>
+                </div>
+            </div>
+
+            <div class="mt-10" style="height: 5px; position: relative; background-color: #f0f0f0; border-radius: 15px;">
+                <div style="position: absolute; left: 0; top: 0; bottom: 0; background-color: green; border-radius: 15px;" [ngStyle]="{ width: getPercentage() + '%' }"></div>
+            </div>
         </div>
-        <button nz-button nzType="primary" (click)="onSubmit()">Submit</button>
-    </div>
+    </nz-affix>
 
-    <div class="mt-10" style="height: 5px; position: relative; background-color: #f0f0f0; border-radius: 15px;">
-        <div style="position: absolute; left: 0; top: 0; bottom: 0; background-color: green; border-radius: 15px;" [ngStyle]="{ width: getPercentage() + '%' }"></div>
-    </div>
 
     <div class="mt-20">
         <div><b>{{testCase.feature.name}}</b></div>
@@ -24,7 +36,7 @@
         <app-test-case-description [description]="testCase.description"></app-test-case-description>
         }
 
-        <div style="display: flex; gap: 40px;" class="mt-20">
+        <div class="flex gap-40 mt-20">
             @if (testCase.stepsToTest.length) {
             <div class="test-step-container">
                 <b>👉 Steps to Test</b>
@@ -52,7 +64,7 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            @if (edgeCase.stepsToReproduce?.length) {
+                            <!-- @if (edgeCase.stepsToReproduce.length) {
                             <button nz-button><nz-icon nzType="unordered-list" nzTheme="outline" (click)="showStepsToReproduceModal(edgeCase)"></nz-icon></button>
                             }
 
@@ -60,10 +72,17 @@
                             <button nz-button><nz-icon nzType="comment" nzTheme="outline" (click)="showEdgeCaseCommentModal(edgeCase)"></nz-icon></button>
                             }
 
-                            @if (edgeCase.attachments?.length) {
+                            @if (edgeCase.attachments.length) {
                             <nz-badge [nzCount]="edgeCase.attachments.length">
                                 <button nz-button><nz-icon nzType="file-image" nzTheme="outline" (click)="showEdgeCaseAttachmentModal(edgeCase)" /></button>
                             </nz-badge>
+                            } -->
+
+                            @if (edgeCase.status === 'failed') {
+                            <button nz-button (click)="showEdgeCaseIssueModal(edgeCase)">
+                                <nz-icon nzType="bug"></nz-icon>
+                                Create Issue
+                            </button>
                             }
 
                             <button nz-button nz-dropdown nzTrigger="click" [nzDropdownMenu]="edgeCaseDropdown"
@@ -75,7 +94,11 @@
                             </button>
                             <nz-dropdown-menu #edgeCaseDropdown="nzDropdownMenu">
                                 <ul nz-menu>
-                                    <li nz-submenu [nzTitle]="'Mark as'">
+                                    <li nz-menu-item (click)="edgeCase.status = null">None</li>
+                                    @for (status of statuses; track status) {
+                                    <li nz-menu-item (click)="edgeCase.status = status.value">{{status.name}}</li>
+                                    }
+                                    <!--<li nz-submenu [nzTitle]="'Mark as'">
                                         <ul>
                                             <li nz-menu-item (click)="edgeCase.status = null">None</li>
                                             @for (status of statuses; track status) {
@@ -85,7 +108,7 @@
                                     </li>
                                     <li nz-menu-item (click)="showEdgeCaseCommentModal(edgeCase)">Add Comment</li>
                                     <li nz-menu-item (click)="showStepsToReproduceModal(edgeCase)">Add Steps to Reproduce</li>
-                                    <li nz-menu-item (click)="showEdgeCaseAttachmentModal(edgeCase)">Attach Images</li>
+                                    <li nz-menu-item (click)="showEdgeCaseAttachmentModal(edgeCase)">Attach Images</li> -->
                                 </ul>
                             </nz-dropdown-menu>
                         </div>
@@ -141,13 +164,19 @@
         </div> -->
     </div>
 
-    <div style="display: flex; justify-content: space-between;" class="mt-40">
+    <div style="justify-content: space-between;" class="flex mt-40">
         <button nz-button (click)="onPrevClick()" [disabled]="!canGoPrev()">Prev</button>
         <button nz-button (click)="onNextClick()" [disabled]="!canGoNext()">Next</button>
     </div>
 </div>
 }
 
+<app-create-edge-case-issue-modal
+    [(isVisible)]="edgeCaseIssueModalVisible"
+    [edgeCase]="selectedEdgeCase"
+    (issueUpdated)="onEdgeCaseIssueUpdated($event)"
+></app-create-edge-case-issue-modal>
+<!-- 
 <nz-modal [(nzVisible)]="edgeCaseCommentModalVisible" (nzOnCancel)="hideEdgeCaseCommentModal()" (nzOnOk)="saveEdgeCaseComment()" nzOkText="Save">
     <ng-container *nzModalContent>
         <textarea nz-input [(ngModel)]="edgeCaseComment" rows="12"></textarea>
@@ -163,8 +192,8 @@
             <p class="ant-upload-text">Click or drag image to this area to upload</p>
         </nz-upload>
     </ng-container>
-</nz-modal>
-
+</nz-modal> -->
+<!-- 
 <nz-modal [(nzVisible)]="stepsToReproduceModalVisible" (nzOnCancel)="hideStepsToReproduceModal()" (nzOnOk)="saveStepsToReproduce()"
     nzHeader="Steps to Reproduce"
 >
@@ -182,4 +211,4 @@
             Add Step
         </button>
     </ng-container>
-</nz-modal>
+</nz-modal> -->

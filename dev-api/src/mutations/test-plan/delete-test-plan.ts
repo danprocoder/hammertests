@@ -10,31 +10,34 @@ export const deleteTestPlanMutator = async (parent: any, testPlanArgs: { id: str
     });
   }
 
-  const userId = context.user.user._id;
-  await Promise.all([
-    TestPlan.deleteOne({
-      _id: testPlanArgs.id,
-      user: userId
-    }),
-    TestFeature.deleteMany({
-      planId: testPlanArgs.id,
-      user: userId
-    }),
-    TestCase.deleteMany({
-      planId: testPlanArgs.id,
-      user: userId
-    }),
-    EdgeCase.deleteMany({
-      planId: testPlanArgs.id,
-      user: userId
-    }),
-    TestRun.deleteMany({
-      planId: testPlanArgs.id,
-      user: userId
-    }),
-    TestRunCase.deleteMany({
-      planId: testPlanArgs.id,
-      user: userId
-    })
-  ]);
+  // TODO: Later, make sure we are checking for project here
+  const testPlan = await TestPlan.findById(testPlanArgs.id);
+  if (!testPlan) {
+    throw new GraphQLError('Test plan not found', {
+      extensions: {
+        code: 'NOT_FOUND'
+      } 
+    });
+  }
+
+  // Delete associated features, test cases, and edge cases
+  const features = await TestFeature.find({ planId: testPlan._id });
+  for (let feature of features) {
+    const testCases = await TestCase.find({ featureId: feature._id });
+
+    const testCaseIds = testCases.map(tc => tc._id);
+    await EdgeCase.deleteMany({ testCase: { $in: testCaseIds } });
+    await TestCase.deleteMany({ featureId: feature._id });
+  }
+  await TestFeature.deleteMany({ planId: testPlan._id });
+
+  // Delete associated test runs and test run cases
+  const testRuns = await TestRun.find({ planId: testPlan._id });
+  await TestRunCase.deleteMany({ testRunId: { $in: testRuns.map(tr => tr._id) } });
+  await TestRun.deleteMany({ planId: testPlan._id });
+
+  // Finally delete the test plan
+  await testPlan.deleteOne();
+
+  return true;
 }

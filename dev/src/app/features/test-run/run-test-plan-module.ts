@@ -20,8 +20,10 @@ import { RunTestHistory } from '@qa/test-run/pages/run-test-history/run-test-his
 import { DurationCounter } from "@qa/components/duration-counter/duration-counter";
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzListModule } from 'ng-zorro-antd/list';
+import { NzAffixModule } from 'ng-zorro-antd/affix';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { AuthGuard } from '../../guards/auth.guard';
+import { CreateEdgeCaseIssueModal } from './pages/run-test-plan/components/create-edge-case-issue-modal/create-edge-case-issue-modal';
 
 const routes: Route[] = [
   {
@@ -56,6 +58,7 @@ const routes: Route[] = [
     RouterModule.forChild(routes),
     CommonModule,
     FormsModule,
+    NzAffixModule,
     NzBadgeModule,
     NzUploadModule,
     NzIconModule,
@@ -73,7 +76,8 @@ const routes: Route[] = [
     TestStatus,
     TestCaseDescription,
     ReactiveFormsModule,
-    DurationCounter
+    DurationCounter,
+    CreateEdgeCaseIssueModal
 ]
 })
 export class RunTestPlanModule { }

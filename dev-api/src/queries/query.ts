@@ -1,8 +1,19 @@
-import { TestPlan, TestRunCase, TestRun, TestCase } from '@qa/models';
+import { TestPlan, TestRunCase, TestRun, TestCase, IRequestContext } from '@qa/models';
+import { GraphQLError } from 'graphql';
 
 export const query = {
-  testPlans: async () => {
-    const plans = await TestPlan.find()
+  testPlans: async (parent: any, args: any, context: IRequestContext) => {
+    if (!context.user) {
+      throw new GraphQLError('You must be logged in', {
+        extensions: {
+          code: 'UNAUTHENTICATED'
+        } 
+      });
+    }
+
+    const plans = await TestPlan.find({
+      project: context.user?.project._id
+    }).sort({ createdAt: -1 });
 
     return plans;
   },

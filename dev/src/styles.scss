@@ -65,6 +65,12 @@ $spacings: 5, 10, 20, 40, 80;
     display: flex;
     flex-direction: row;
 
+    &-space-between {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
     &-column {
         display: flex;
         flex-direction: column;
@@ -77,9 +83,13 @@ $spacings: 5, 10, 20, 40, 80;
     }
 
     @each $s in $spacings {
-    &.gap-#{$s} {
-        gap: #{$s}px;
+        &.gap-#{$s} {
+            gap: #{$s}px;
+        }
     }
+
+    &.align-center {
+        align-items: center;
     }
 }
 

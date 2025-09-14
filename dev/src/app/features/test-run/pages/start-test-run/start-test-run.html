@@ -4,7 +4,7 @@
         <div>{{ plan.description }}</div>
     </div>
 
-    <form nz-form nzLayout="vertical" [formGroup]="formGroup" style="display: flex; flex-direction: column; gap: 20px; width: 500px; margin-top: 40px;">
+    <form nz-form nzLayout="vertical" [formGroup]="formGroup" class="flex-column gap-20 mt-40" style="width: 500px;">
         <nz-form-item>
             <nz-form-label>Test Environment</nz-form-label>
             <nz-form-control>
@@ -39,11 +39,22 @@
                 </nz-select>
             </nz-form-control>
 
-            <div style="margin-top: 20px;" *ngIf="$any(formGroup.get('modules')).value === 'selected'">
-                <div>
-                    <input nz-input type="text" [(ngModel)]="searchText" style="width: 100%;" [ngModelOptions]="{standalone: true}" />
-                </div>
-                <nz-checkbox-group style="display: grid; grid-template-columns: 1fr 1fr 1fr;row-gap: 10px;">
+            <div class="mt-20" *ngIf="$any(formGroup.get('modules')).value === 'selected'">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input
+                        nz-input
+                        type="text"
+                        [(ngModel)]="searchText"
+                        style="width: 100%;"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="Type to filter"
+                    />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <span nz-icon nzType="search" nzTheme="outline"></span>
+                </ng-template>
+
+                <nz-checkbox-group class="grid mt-10" style="grid-template-columns: 1fr 1fr 1fr;row-gap: 10px;">
                     @for (item of getFiltered(); track item._id) {
                         <label nz-checkbox [nzValue]="item._id" [formControl]="item.control">{{ item.name }}</label>
                     }
@@ -53,8 +64,8 @@
 
         <div>
             <button nz-button nzType="primary" (click)="startTest()" [disabled]="!formGroup.valid">
-                Start
                 <i nz-icon nzType="caret-right"></i>
+                Start
             </button>
         </div>
     </form>

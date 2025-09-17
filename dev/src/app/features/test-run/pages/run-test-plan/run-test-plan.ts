@@ -2,14 +2,15 @@ import { Component } from '@angular/core';
 import { TestFeature } from '@qa/test-plan/services/test-feature';
 import { TestRun } from '@qa/test-run/services/test-run';
 import { ActivatedRoute, Router } from '@angular/router';
-import { from, map, switchMap, tap } from 'rxjs';
-import { uploadData, getUrl } from '@aws-amplify/storage';
-import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
+import { switchMap } from 'rxjs';
+import { uploadData } from '@aws-amplify/storage';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable } from 'rxjs';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ITestRunCase, ITestRunEdgeCase, TestStatus } from '../../../../models/test-run.model';
+import { FormArray, FormGroup } from '@angular/forms';
+import { ITestRunCase, ITestRunEdgeCase, TestStatus, IIssue } from '../../../../models/test-run.model';
 
-interface IDisplayTestRunEdgeCase extends IEdgeCase, Required<Pick<ITestRunEdgeCase, 'attachments' | 'stepsToReproduce' | 'comment'>> {
+interface IDisplayTestRunEdgeCase extends IEdgeCase {
+  issue: IIssue | null;
   status: TestStatus | null;
 }
 
@@ -57,7 +58,7 @@ export class RunTestPlan {
    * Stores the currently selected edge case for modal dialogs.
    * Used to determine which edge case is being modified when displaying or editing edge case-related modals.
    */
-  selectedEdgeCase: any;
+  selectedEdgeCase?: IDisplayTestRunEdgeCase;
 
   edgeCaseCommentModalVisible = false;
   edgeCaseComment: any;
@@ -118,10 +119,8 @@ export class RunTestPlan {
                       return {
                         ...edgeCase,
                         status: null,
-                        comment: '',
-                        stepsToReproduce: [],
-                        attachments: []
-                      };
+                        issue: null
+                      } satisfies IDisplayTestRunEdgeCase;
                     }
 
                     const savedEdgeCase = savedRunTC.edgeCases.find((savedEC: any) => savedEC.edgeCaseId._id == edgeCase._id);
@@ -129,19 +128,15 @@ export class RunTestPlan {
                       return {
                         ...edgeCase,
                         status: null,
-                        comment: '',
-                        stepsToReproduce: [],
-                        attachments: []
-                      };
+                        issue: null
+                      } satisfies IDisplayTestRunEdgeCase;
                     }
                     
                     return {
                       ...edgeCase,
                       status: savedEdgeCase.status,
-                      comment: savedEdgeCase.comment ?? '',
-                      attachments: savedEdgeCase.attachments ?? [],
-                      stepsToReproduce: savedEdgeCase.stepsToReproduce  ?? []
-                    };
+                      issue: savedEdgeCase.issue ?? null
+                    } satisfies IDisplayTestRunEdgeCase;
                   });
 
                   return {
@@ -238,8 +233,10 @@ export class RunTestPlan {
     this.edgeCaseIssueModalVisible = true;
   }
 
-  onEdgeCaseIssueUpdated(updatedIssue: any): void {
-    console.log('Updated Issue', updatedIssue);
+  onEdgeCaseIssueUpdated(updatedIssue: IIssue): void {
+    if (this.selectedEdgeCase) {
+      this.selectedEdgeCase.issue = updatedIssue;
+    }
   }
 
   /********************** STEPS TO REPRODUCE **********************/
@@ -435,15 +432,8 @@ export class RunTestPlan {
         const payload: ITestRunEdgeCase = {
           edgeCaseId: edgeCase._id,
           status: edgeCase.status,
-          attachments: edgeCase.attachments ?? [],
-          stepsToReproduce: (edgeCase.stepsToReproduce ?? []).map((step: any) => ({
-            ...(step._id ? { _id: step._id } : {}),
-            step: step.step
-          }))
+          ...(edgeCase.issue ? { issue: edgeCase.issue } : {}),
         };
-        if (edgeCase.comment) {
-          payload.comment = edgeCase.comment;
-        }
 
         return payload;
       }),

@@ -135,13 +135,18 @@ const typeDefs = gql`
     _id: ID,
     step: String
   }
+  
+  input TestRunEdgeCaseIssue {
+    _id: ID,
+    title: String,
+    description: String,
+    stepsToReproduce: [TestRunStepToReproduceInput]
+  }
 
   input TestRunEdgeCaseInput {
     edgeCaseId: ID,
+    issue: TestRunEdgeCaseIssue,
     status: String,
-    comment: String,
-    attachments: [String],
-    stepsToReproduce: [TestRunStepToReproduceInput]
   }
 
   input TestRunCaseInput {

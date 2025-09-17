@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql';
-import { IRequestContext, TestCase, TestRun, TestRunCase } from "@qa/models";
+import { IRequestContext, Issue, TestCase, TestRun, TestRunCase } from "@qa/models";
 import { updateTestRunCaseStats } from './mark-test-run-as-finished';
 import { Types } from 'mongoose';
 
@@ -25,6 +25,32 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
     testRunId,
     testCaseId: testRunCase.testCaseId
   });
+
+  // Edgecases need to be an id
+  for (const edgeCase of testRunCase.edgeCases) {
+    if (edgeCase.issue) {
+      if (edgeCase.issue._id) {
+        await Issue.updateOne({ _id: edgeCase.issue._id, edgeCase: edgeCase.edgeCaseId }, {
+          title: edgeCase.issue.title,
+          description: edgeCase.issue.description,
+          stepsToReproduce: edgeCase.issue.stepsToReproduce
+        });
+        edgeCase.issue = edgeCase.issue._id;
+      } else {
+        const newIssue = await Issue.create({
+          project: req.user.project._id,
+          user: req.user.user._id,
+          edgeCase: edgeCase.edgeCaseId,
+          title: edgeCase.issue.title,
+          description: edgeCase.issue.description,
+          stepsToReproduce: edgeCase.issue.stepsToReproduce
+        });
+
+        edgeCase.issue = newIssue._id;
+      }
+    }
+  }
+
   if (runTc) {
     await runTc.updateOne({
       testCaseId: testRunCase.testCaseId,

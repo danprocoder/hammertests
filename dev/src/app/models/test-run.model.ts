@@ -3,10 +3,8 @@ export type TestStatus = 'passed' | 'passed-with-warnings' | 'failed' | 'blocked
 
 export interface ITestRunEdgeCase {
   edgeCaseId: IEdgeCase;
+  issue?: IIssue;
   status: TestStatus;
-  attachments?: string[];
-  stepsToReproduce?: ITestRunStepToReproduce[];
-  comment?: string;
 }
 
 export interface ITestRunStepToReproduce {
@@ -40,4 +38,11 @@ export interface ITestRunCase {
   edgeCases: ITestRunEdgeCase[];
   attachments?: string[];
   comment?: string;
+}
+
+export interface IIssue {
+  _id?: string;
+  title: string;
+  description: string;
+  stepsToReproduce: { step: string }[];
 }

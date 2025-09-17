@@ -10,6 +10,7 @@ import { editTestRunCaseMutator } from './mutations/test-run/edit-test-run-case'
 import { startTestRunMutator } from './mutations/test-run/start-test-run';
 import { deleteTestPlanMutator } from './mutations/test-plan/delete-test-plan';
 import { testCaseQuery } from './queries/test-case';
+import { editIssueMutator } from './mutations/issue/edit-issue';
 
 const resolvers = {
   DateTime: DateTimeResolver,
@@ -28,6 +29,7 @@ const resolvers = {
     startTestRun: startTestRunMutator,
     editTestRunCase: editTestRunCaseMutator,
     markTestRunAsFinished: markTestRunAsFinishedMutator,
+    editIssue: editIssueMutator
   }
 };
 

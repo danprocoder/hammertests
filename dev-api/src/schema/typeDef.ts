@@ -217,6 +217,24 @@ const typeDefs = gql`
     planId: ID,
     status: String
   }
+
+  type Issue {
+    _id: ID,
+    edgeCase: TestCaseEdgeCase,
+    title: String,
+    description: String,
+    status: String,
+    priority: String,
+    stepsToReproduce: [TestRunStepToReproduce],
+    attachments: [String],
+    createdAt: DateTime,
+    updatedAt: DateTime
+  }
+
+  input IssueInput {
+    status: String,
+    priority: String
+  }
   
   type Query {
     testPlans: [TestPlan],
@@ -224,7 +242,8 @@ const typeDefs = gql`
     getTestCase(id: ID): TestCase,
     getTestRuns(query: TestRunsQueryInput): [TestRun],
     getTestRun(id: ID): TestRun,
-    getTestRunCases(planId: ID, testRunId: ID): [TestRunCase]
+    getTestRunCases(planId: ID, testRunId: ID): [TestRunCase],
+    getIssues: [Issue]
   }
 
   type Mutation {
@@ -235,7 +254,8 @@ const typeDefs = gql`
     editTestRunCase(planId: ID, testRunId: ID, testCase: TestRunCaseInput): TestRunCase,
     updateTestRun(testRun: TestRunInput): TestRun,
     markTestRunAsFinished(planId: ID, testRunId: ID): TestRun,
-    deleteTestPlan(id: ID!): Boolean
+    deleteTestPlan(id: ID!): Boolean,
+    editIssue(id: ID, issue: IssueInput): Issue
   }
 `;
 

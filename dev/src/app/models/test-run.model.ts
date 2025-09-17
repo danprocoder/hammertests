@@ -42,7 +42,14 @@ export interface ITestRunCase {
 
 export interface IIssue {
   _id?: string;
+  edgeCase: IEdgeCase;
+  project: string;
+  user: string;
   title: string;
   description: string;
   stepsToReproduce: { step: string }[];
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: 'open' | 'in_progress' | 'closed';
+  attachments: string[];
+  createdAt?: string;
 }

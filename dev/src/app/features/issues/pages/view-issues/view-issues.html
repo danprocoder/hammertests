@@ -1,0 +1,81 @@
+<h2>Issues</h2>
+
+<nz-table #issuesTable [nzData]="issues">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Date Created</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let issue of issuesTable.data">
+      <td>{{ issue.title }}</td>
+      <td>{{ issue.description }}</td>
+      <td>{{ issue.priority }}</td>
+      <td>{{ issue.status }}</td>
+      <td>{{ issue.createdAt | date: 'short' }}</td>
+      <td>
+        <button nz-button (click)="viewIssue(issue)">View</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="issueModalVisible" (nzOnCancel)="closeIssueModal()" [nzFooter]="null" nzWidth="800px">
+  <ng-container *nzModalContent>
+    <h2>{{ selectedIssue?.title }}</h2>
+    <div class="mt-10" style="display: grid; grid-template-columns: 1fr 200px; column-gap: 20px;">
+      <div>
+        <div class="flex gap-20">
+          <p>Priority:<br/>
+            <nz-select [ngModel]="selectedIssue?.priority" style="width: 120px;" (ngModelChange)="onPriorityChange($event)">
+              <nz-option *ngFor="let priority of ['low', 'medium', 'high', 'critical']" [nzValue]="priority" [nzLabel]="priority"></nz-option>
+            </nz-select>
+          </p>
+
+          <p>Status:<br/>
+            <nz-select [ngModel]="selectedIssue?.status" style="width: 120px;" (ngModelChange)="onStatusChange($event)">
+              <nz-option *ngFor="let status of ['open', 'in_progress', 'closed']" [nzValue]="status" [nzLabel]="status"></nz-option>
+            </nz-select>
+          </p>
+
+          <p>Date Created:<br/>{{ selectedIssue?.createdAt | date: 'short' }}</p>
+        </div>
+
+        <div class="mt-10">
+          <div style="font-weight: bold;">Description</div>
+          <p>{{ selectedIssue?.description }}</p>
+        </div>
+
+        <div class="mt-10">
+          <div style="font-weight: bold;">Steps to Reproduce</div>
+          <ul>
+            <li *ngFor="let step of selectedIssue?.stepsToReproduce">{{ step.step }}</li>
+          </ul>
+        </div>
+
+        <div class="mt-10">
+          <div style="font-weight: bold;">Attachments</div>
+          <ul>
+            <li *ngFor="let attachment of selectedIssue?.attachments">
+              <img [src]="attachment" width="150" height="150" />
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div>
+        <div style="font-weight: bold;">Edgecase:</div>
+        <div class="mt-10">
+          <b>If</b><br/>{{ selectedIssue?.edgeCase?.title }}
+          <br/>
+          <b>then</b><br/>{{ selectedIssue?.edgeCase?.expectation }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>

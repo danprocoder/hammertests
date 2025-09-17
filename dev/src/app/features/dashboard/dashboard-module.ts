@@ -9,6 +9,7 @@ import { ViewTestPlan } from '@qa/test-plan/pages/view-test-plan/view-test-plan'
 import { Container } from '@qa/components/container/container';
 import { AuthGuard } from '../../guards/auth.guard';
 import { CanDeactivatePage } from '../../guards/can-deactivate.guard';
+import { ViewIssues } from '../issues/pages/view-issues/view-issues';
 
 const routes: Route[] = [
   {
@@ -44,6 +45,16 @@ const routes: Route[] = [
       {
         path: 'run',
         loadChildren: () => import('../test-run/run-test-plan-module').then((m) => m.RunTestPlanModule)
+      },
+      {
+        path: 'issues',
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: '',
+            component: ViewIssues
+          }
+        ]
       }
     ]
   }

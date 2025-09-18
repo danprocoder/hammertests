@@ -1,5 +1,8 @@
 import mongoose, { Model, Schema, Document, Types } from "mongoose";
 
+type IssueStatus = 'open' | 'in_progress' | 'closed';
+type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
+
 interface IIssue {
   project: Types.ObjectId,
   user: Types.ObjectId,
@@ -62,5 +65,5 @@ const issueSchema = new Schema<IIssueDocument>({
 
 const Issue = mongoose.model<IIssueDocument, IIssueModel>('Issue', issueSchema, 'issues');
 
-export type { IIssue, IIssueDocument };
+export type { IssueStatus, IssuePriority, IIssue, IIssueDocument };
 export { Issue };

@@ -16,7 +16,7 @@ export class Issue {
     return this.apollo.query<{ getIssues: IIssue[] }>({
       query: gql`
         query {
-          getIssues {
+          issues {
             _id
             edgeCase {
               _id

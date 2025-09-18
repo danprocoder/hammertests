@@ -1,15 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Dashboard } from './dashboard';
 import { Route, RouterModule } from '@angular/router';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic'
 import { EditTestPlan } from '@qa/test-plan/pages/edit-test-plan/edit-test-plan';
 import { StartTestRun } from '@qa/test-run/pages/start-test-run/start-test-run';
-import { Navbar } from '@qa/components/navbar/navbar';
 import { TestPlans } from '@qa/test-plan/pages/test-plans/test-plans';
 import { ViewTestPlan } from '@qa/test-plan/pages/view-test-plan/view-test-plan';
 import { Container } from '@qa/components/container/container';
 import { AuthGuard } from '../../guards/auth.guard';
 import { CanDeactivatePage } from '../../guards/can-deactivate.guard';
 import { ViewIssues } from '../issues/pages/view-issues/view-issues';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { DashboardService } from './dashboard.service';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { CommonModule } from '@angular/common';
 
 const routes: Route[] = [
   {
@@ -18,6 +22,11 @@ const routes: Route[] = [
     children: [
       {
         path: '',
+        canActivate: [AuthGuard],
+        component: Dashboard,
+      },
+      {
+        path: 'plans',
         canActivate: [AuthGuard],
         component: TestPlans,
       },
@@ -63,8 +72,12 @@ const routes: Route[] = [
 @NgModule({
   declarations: [Dashboard],
   imports: [
-    Navbar,
+    CommonModule,
+    NzStatisticModule,
+    NzCardModule,
+    NzTableModule,
     RouterModule.forChild(routes)
-  ]
+  ],
+  providers: [DashboardService]
 })
 export class DashboardModule { }

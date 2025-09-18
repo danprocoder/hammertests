@@ -7,6 +7,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule } from '@angular/forms';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 @Component({
   selector: 'app-view-issues',
@@ -16,7 +17,8 @@ import { FormsModule } from '@angular/forms';
     NzModalModule,
     NzTableModule,
     NzSelectModule,
-    NzButtonModule
+    NzButtonModule,
+    NzCardModule
   ],
   templateUrl: './view-issues.html',
   styleUrl: './view-issues.scss'
@@ -37,7 +39,7 @@ export class ViewIssues {
   loadIssues(): void {
     this.issueService.getIssues().subscribe({
       next: (result: any) => {
-        this.issues = result.data.getIssues;
+        this.issues = result.data.issues;
       },
       error: (error: any) => {
         console.error('Error fetching issues:', error);

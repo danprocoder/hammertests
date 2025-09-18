@@ -6,6 +6,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { IIssue } from '../../../../../../models/test-run.model';
 
 @Component({
   selector: 'app-create-edge-case-issue-modal',
@@ -42,8 +43,27 @@ export class CreateEdgeCaseIssueModal {
   }
 
   ngOnChanges(): void {
-    if (this.edgeCase) {
-      console.log(this.edgeCase);
+    this.issueForm.reset();
+    this.steps.clear();
+
+    if (this.edgeCase && this.edgeCase.issue) {
+      this.setupForm(this.edgeCase.issue);
+    }
+  }
+
+  setupForm(issue: IIssue): void {
+    this.issueForm.patchValue({
+      title: issue.title,
+      description: issue.description
+    });
+
+    if (issue.stepsToReproduce && issue.stepsToReproduce.length) {
+      issue.stepsToReproduce.forEach(s => {
+        this.steps.push(this.fb.group({
+          step: this.fb.control(s.step, Validators.required),
+          edit: this.fb.control(false)
+        }));
+      });
     }
   }
 
@@ -94,6 +114,8 @@ export class CreateEdgeCaseIssueModal {
     const value = this.issueForm.value;
     this.issueUpdated.emit({
       ...value,
+      // _id is needed if editing an existing issue
+      ...(this.edgeCase.issue ? { _id: this.edgeCase.issue._id } : {}),
       stepsToReproduce: value.stepsToReproduce.map((s: any) => {
         return { step: s.step };
       })

@@ -3,7 +3,7 @@ export type TestStatus = 'passed' | 'passed-with-warnings' | 'failed' | 'blocked
 
 export interface ITestRunEdgeCase {
   edgeCaseId: IEdgeCase;
-  issue?: IIssue;
+  issue?: Partial<IIssue>;
   status: TestStatus;
 }
 
@@ -29,7 +29,7 @@ export interface ITestRun {
   testCases: ITestRunCase[];
   overallReport?: string;
   attachment?: string[];
-  dateCreated?: string;
+  createdAt?: string;
 }
 
 export interface ITestRunCase {

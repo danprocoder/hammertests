@@ -9,7 +9,7 @@
         <i nz-icon nzType="dashboard"></i>
         Dashboard
       </li>
-      <li nz-menu-item routerLink="/dashboard">
+      <li nz-menu-item routerLink="/dashboard/plans">
         <i nz-icon nzType="tool"></i>
         Test Plan
       </li>
@@ -30,9 +30,7 @@
     </nz-header>
 
     <nz-content style="padding: 20px;">
-      <nz-card>
-        <router-outlet></router-outlet>
-      </nz-card>
+      <router-outlet></router-outlet>
     </nz-content>
 
     <nz-footer>Footer</nz-footer>

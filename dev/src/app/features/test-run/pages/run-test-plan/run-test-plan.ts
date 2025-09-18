@@ -10,7 +10,7 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { ITestRunCase, ITestRunEdgeCase, TestStatus, IIssue } from '../../../../models/test-run.model';
 
 interface IDisplayTestRunEdgeCase extends IEdgeCase {
-  issue: IIssue | null;
+  issue: Partial<IIssue> | null;
   status: TestStatus | null;
 }
 
@@ -156,8 +156,6 @@ export class RunTestPlan {
 
               return [...prev, ...mapped];
             }, [] as IDisplayTestRunCase[]);
-
-          console.log(this.testCases);
 
           const lastUnsavedIndex = this.testCases.findIndex((tc: any) => !tc.edgeCases.every((edgeCase: any) => !!edgeCase.status));
           this.testCasePosition = lastUnsavedIndex >= 0 ? lastUnsavedIndex : 0;
@@ -432,7 +430,17 @@ export class RunTestPlan {
         const payload: ITestRunEdgeCase = {
           edgeCaseId: edgeCase._id,
           status: edgeCase.status,
-          ...(edgeCase.issue ? { issue: edgeCase.issue } : {}),
+          ...(edgeCase.issue ? {
+            issue: {
+              ...(edgeCase.issue._id ? { _id: edgeCase.issue._id } : {}),
+              title: edgeCase.issue.title,
+              description: edgeCase.issue.description,
+              stepsToReproduce: edgeCase.issue.stepsToReproduce?.map((s: any) => ({
+                ...(s._id ? { _id: s._id } : {}),
+                step: s.step
+              })) || []
+            }
+          } : {}),
         };
 
         return payload;

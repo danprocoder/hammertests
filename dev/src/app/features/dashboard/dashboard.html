@@ -1,5 +1,72 @@
-<app-navbar></app-navbar>
+<h2>Dashboard</h2>
 
-<div style="margin-top: 40px;">
-    <router-outlet></router-outlet>
+@if (data) {
+<div class="grid mt-20">
+    <nz-card class="a">
+        <nz-statistic [nzValue]="data.openIssues" nzTitle="Open Issues"></nz-statistic>
+    </nz-card>
+
+    <nz-card class="b">
+        <nz-statistic [nzValue]="data.inProgressIssues" nzTitle="Issues In Progress"></nz-statistic>
+    </nz-card>
+
+    <nz-card class="c">
+        <div>Last Test Result</div>
+
+        <div class="mt-20">
+            <canvas #pieChartCanvas width="450" height="220"></canvas>
+        </div>
+    </nz-card>
+
+    <nz-card class="d">
+        <div>Open Issues</div>
+
+        <div class="mt-20">
+            <nz-table #activeIssues [nzData]="data.recentIssues">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (issue of activeIssues.data; track issue._id) {
+                        <tr>
+                            <td><a [routerLink]="'/dashboard/issues'">{{ issue.title }}</a></td>
+                            <td>{{ issue.status }}</td>
+                            <td>{{ issue.priority }}</td>
+                            <td>{{ issue.createdAt | date: 'short' }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </nz-table>
+        </div>
+    </nz-card>
+
+    <nz-card class="e">
+        <div>Active Test Runs</div>
+
+        <div class="mt-20">
+            <nz-table #activeTestRunsTable [nzData]="data.recentTestRuns">
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Started At</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (run of activeTestRunsTable.data; track run._id) {
+                        <tr>
+                            <td><a [routerLink]="'/dashboard/run/' + run.planId + '/' + run._id">{{ run.planId }}</a></td>
+                            <td>{{ run.createdAt | date: 'short' }}</td>
+                            <td>50%</td>
+                        </tr>
+                    }
+            </nz-table>
+        </div>
+    </nz-card>
 </div>
+}

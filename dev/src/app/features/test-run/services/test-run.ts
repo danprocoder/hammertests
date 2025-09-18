@@ -68,13 +68,17 @@ export class TestRun {
               expectation,
               order
             },
-            status,
-            comment,
-            attachments,
-            stepsToReproduce {
+            issue {
               _id,
-              step
-            }
+              title,
+              description,
+              stepsToReproduce {
+                _id,
+                step
+              },
+              attachments,
+            },
+            status
           }
         }
       }`

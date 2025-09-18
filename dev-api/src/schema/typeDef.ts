@@ -104,10 +104,8 @@ const typeDefs = gql`
   type TestRunEdgeCase {
     _id: ID,
     edgeCaseId: TestCaseEdgeCase,
-    status: ID,
-    comment: String,
-    attachments: [String],
-    stepsToReproduce: [TestRunStepToReproduce]
+    issue: Issue,
+    status: ID
   }
 
   type TestRunResult {
@@ -140,7 +138,8 @@ const typeDefs = gql`
     _id: ID,
     title: String,
     description: String,
-    stepsToReproduce: [TestRunStepToReproduceInput]
+    stepsToReproduce: [TestRunStepToReproduceInput],
+    attachments: [String]
   }
 
   input TestRunEdgeCaseInput {
@@ -235,6 +234,14 @@ const typeDefs = gql`
     status: String,
     priority: String
   }
+
+  type DashboardData {
+    openIssues: Int,
+    inProgressIssues: Int,
+    lastTestResult: TestRun,
+    recentIssues: [Issue],
+    recentTestRuns: [TestRun]
+  }
   
   type Query {
     testPlans: [TestPlan],
@@ -243,7 +250,8 @@ const typeDefs = gql`
     getTestRuns(query: TestRunsQueryInput): [TestRun],
     getTestRun(id: ID): TestRun,
     getTestRunCases(planId: ID, testRunId: ID): [TestRunCase],
-    getIssues: [Issue]
+    issues: [Issue],
+    dashboard: DashboardData
   }
 
   type Mutation {

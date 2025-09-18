@@ -1,29 +1,31 @@
 <h2>Issues</h2>
 
-<nz-table #issuesTable [nzData]="issues">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Priority</th>
-      <th>Status</th>
-      <th>Date Created</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let issue of issuesTable.data">
-      <td>{{ issue.title }}</td>
-      <td>{{ issue.description }}</td>
-      <td>{{ issue.priority }}</td>
-      <td>{{ issue.status }}</td>
-      <td>{{ issue.createdAt | date: 'short' }}</td>
-      <td>
-        <button nz-button (click)="viewIssue(issue)">View</button>
-      </td>
-    </tr>
-  </tbody>
-</nz-table>
+<nz-card class="mt-20">
+  <nz-table #issuesTable [nzData]="issues" style="padding: 0;">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Date Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let issue of issuesTable.data">
+        <td>{{ issue.title }}</td>
+        <td>{{ issue.description }}</td>
+        <td>{{ issue.priority }}</td>
+        <td>{{ issue.status }}</td>
+        <td>{{ issue.createdAt | date: 'short' }}</td>
+        <td>
+          <button nz-button (click)="viewIssue(issue)">View</button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
 
 <nz-modal [(nzVisible)]="issueModalVisible" (nzOnCancel)="closeIssueModal()" [nzFooter]="null" nzWidth="800px">
   <ng-container *nzModalContent>
@@ -67,7 +69,7 @@
           </ul>
         </div>
       </div>
-      
+
       <div>
         <div style="font-weight: bold;">Edgecase:</div>
         <div class="mt-10">

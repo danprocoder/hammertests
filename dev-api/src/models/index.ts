@@ -27,7 +27,7 @@ export type { IProject } from './project';
 export { ProjectMember } from './project';
 export type {IProjectMember } from './project';
 
-export type { IIssue, IIssueDocument } from './issue';
+export type { IIssue, IIssueDocument, IssueStatus, IssuePriority } from './issue';
 export { Issue } from './issue';
 
 export { TestRun } from './test-run';

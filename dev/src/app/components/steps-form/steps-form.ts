@@ -4,6 +4,7 @@ import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzFormModule } from "ng-zorro-antd/form";
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { NzInputModule } from "ng-zorro-antd/input";
+import { NzPopconfirmModule } from "ng-zorro-antd/popconfirm";
 
 interface IStepValue {
   step: string;
@@ -22,6 +23,7 @@ interface IStepFormValue extends IStepValue {
     NzFormModule,
     NzInputModule,
     NzIconModule,
+    NzPopconfirmModule,
     NzButtonModule
   ],
   providers: [
@@ -75,9 +77,7 @@ export class StepsForm implements ControlValueAccessor {
       edit: this.fb.control(true)
     }));
 
-    setTimeout(() => {
-      this.stepInput?.nativeElement.focus();
-    }, 50);
+    this.focusInput();
   }
 
   onStepBlur(index: number): void {
@@ -92,6 +92,8 @@ export class StepsForm implements ControlValueAccessor {
 
   editStep(index: number): void {
     this.steps.at(index).patchValue({ edit: true });
+    
+    this.focusInput();
   }
 
   removeStep(index: number): void {
@@ -110,6 +112,12 @@ export class StepsForm implements ControlValueAccessor {
     if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
       this.onSaveStep(index);
     }
+  }
+
+  private focusInput(): void {
+    setTimeout(() => {
+      this.stepInput?.nativeElement.focus();
+    }, 50);
   }
 
   get steps(): FormArray {

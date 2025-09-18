@@ -16,6 +16,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { CommonModule } from '@angular/common';
 import _cloneDeep from 'lodash.clonedeep';
 import { Deactivatable } from '../../../../guards/can-deactivate.guard';
+import { StepsForm } from '@qa/components/steps-form/steps-form';
 
 interface ITestEnvironment {
   _id?: string;
@@ -88,7 +89,8 @@ interface ITestPlanForm {
     NzListModule,
     NzPopconfirmModule,
     NzDividerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StepsForm
 ],
   templateUrl: './edit-test-plan.html',
   styleUrl: './edit-test-plan.scss'
@@ -181,11 +183,9 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
             order: new FormControl(t.order ?? index),
 
             // Steps to test
-            stepsToTest: new FormArray((t.stepsToTest ?? []).map((item: any, i: number) => new FormGroup({
-              _id: new FormControl(item._id),
-              oldDescription: new FormControl(''),
-              description: new FormControl(item.description, [Validators.required]),
-              edit: new FormControl(false)
+            stepsToTest: new FormControl((t.stepsToTest ?? []).map((item: any) => ({
+              _id: item._id,
+              step: item.description
             }))),
 
             // Populate edge cases
@@ -258,93 +258,6 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     testCases.removeAt(index);
   }
 
-  /**************** STEPS TO TEST **************/
-
-  addStepToTest(testCase: FormControl<any>): void {
-    const steps = testCase.get('stepsToTest') as FormArray;
-    steps.controls.forEach((step) => step.get('edit')?.setValue(false));
-
-    steps.push(
-      new FormGroup({
-        oldDescription: new FormControl(''),
-        description: new FormControl('', [Validators.required]),
-        edit: new FormControl(true)
-      })
-    );
-
-    setTimeout(() => {
-      this.stepInput?.nativeElement.focus();
-    }, 150);
-  }
-
-  editSteptoTest(testCase: FormControl<any>, index: number): void {
-    const steps = testCase.get('stepsToTest') as FormArray;
-    steps.controls.forEach((step, i) => {
-      if (step.get('edit')?.value) {
-        this.cancelEditStep(testCase, i);
-      }
-    });
-
-    const control = steps.at(index);
-    const old = control.get('oldDescription') as FormControl;
-
-    old.setValue(control.get('description')?.value);
-    control.get('edit')?.setValue(true);
-
-    setTimeout(() => {
-      this.stepInput?.nativeElement.focus();
-    }, 150);
-  }
-
-  onEditStepBlur(testCase: FormControl<any>, index: number): void {
-    const step = (testCase.get('stepsToTest') as FormArray).at(index);
-    const oldDescription = step.get('oldDescription')?.value;
-    const description = step.get('description')?.value;
-    // If they are both empty or nothing was changed
-    if ((!description && !oldDescription) || (description == oldDescription)) {
-      this.cancelEditStep(testCase, index);
-    }
-  }
-
-  cancelEditStep(testCase: FormControl<any>, index: number): void {
-    const control = (testCase.get('stepsToTest') as FormArray).at(index);
-    const old = control.get('oldDescription') as FormControl;
-
-    control.get('description')?.setValue(old.value);
-    control.get('edit')?.setValue(false);
-
-    if (!control.get('description')?.value) {
-      this.removeStepToTest(testCase, index);
-    }
-  }
-
-  saveEditStep(testCase: FormControl<any>, index: number): void {
-    const step = testCase.get('stepsToTest') as FormArray;
-
-    const control = step.at(index);
-    control.get('oldDescription')?.setValue('');
-    control.get('edit')?.setValue(false);
-
-    if ((step.controls.length - 1) == index) {
-      this.addStepToTest(testCase);
-    }
-  }
-
-  removeStepToTest(testCase: any, index: number): void {
-    (testCase.get('stepsToTest') as FormArray).removeAt(index);
-  }
-
-  anyStepOnEditMode(testCase: any): boolean {
-    const steps = (testCase.get('stepsToTest') as FormArray).controls;
-
-    return steps.some((step) => step.get('edit')?.value);
-  }
-
-  onStepKeyDown(ev: KeyboardEvent, testCase: any, index: number): void {
-    if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
-      this.saveEditStep(testCase, index);
-    }
-  }
 
   moveFeatureUp(currentIndex: number): void {
     const features = this.formGroup.get('features') as FormArray;
@@ -441,8 +354,8 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
 
     value.features.forEach((feature: any) => {
       feature.testCases.forEach((testCase: any) => {
-        testCase.stepsToTest = (testCase.stepsToTest ?? []).map(({ _id, description }: any) => {
-          return _id ? { _id, description } : { description };
+        testCase.stepsToTest = (testCase.stepsToTest ?? []).map(({ _id, step }: any) => {
+          return _id ? { _id, description: step } : { description: step };
         })
       });
     });

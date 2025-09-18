@@ -72,48 +72,8 @@
 
                                 <!-- Steps to test -->
                                 <div class="mt-20">
-                                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                                        <b>Steps to Test</b>
-                                        @if (!testCase.get('stepsToTest').controls?.length) {
-                                        <button nz-button (click)="addStepToTest(testCase)" nzType="link">
-                                            <nz-icon nzType="plus"></nz-icon> Add Step
-                                        </button>
-                                        }
-                                    </div>
-
-                                    <div class="mt-20" style="display: grid; flex-direction: column; gap: 10px;">
-                                        @for (step of $any(testCase.get('stepsToTest').controls); track step; let i = $index) {
-                                        <div>
-                                            @if (!step.get('edit').value) {
-                                            <div style="display: grid; grid-template-columns: 26px 1fr 34px 34px;">
-                                                <span>👉</span>
-                                                {{ step.get('description').value }}
-                                                <button nz-button nzType="link" (click)="editSteptoTest(testCase, i)">
-                                                    <i nz-icon nzType="edit"></i>
-                                                </button>
-                                                <button nz-button nzType="link" nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete this?"  (nzOnConfirm)="removeStepToTest(testCase, i)">
-                                                    <i nz-icon nzType="delete"></i>
-                                                </button>
-                                            </div>
-                                            } @else {
-                                            <textarea nz-input #stepInput [formControl]="step.get('description')" placeholder="Click on X button"
-                                                (keydown)="onStepKeyDown($event, testCase, i)" (blur)="onEditStepBlur(testCase, i)"
-                                            ></textarea>
-
-                                            <div style="display: flex; flex-direction: row; justify-content: flex-end; gap: 10px;" class="mt-10">
-                                                <button nz-button (click)="cancelEditStep(testCase, i)">Cancel</button>
-                                                <button nz-button (click)="saveEditStep(testCase, i)" nzType="primary" [disabled]="!step.get('description').valid">Save</button>
-                                            </div>
-                                            }
-                                        </div>
-                                        }
-                                    </div>
-
-                                    @if (testCase.get('stepsToTest').controls?.length && !anyStepOnEditMode(testCase)) {
-                                    <div>
-                                        <button nz-button (click)="addStepToTest(testCase)" nzBlock>👉 Add Step</button>
-                                    </div>
-                                    }
+                                    <b>Steps to test</b>
+                                    <app-steps-form [formControl]="$any(testCase.get('stepsToTest'))"></app-steps-form>
                                 </div>
 
                                 <!-- Edge cases -->

@@ -1,5 +1,5 @@
 interface IEdgeCase {
-  _id: string;
+  _id?: string;
   title: string;
   expectation: string;
   order: number;

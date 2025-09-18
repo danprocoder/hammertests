@@ -78,30 +78,8 @@
 
                                 <!-- Edge cases -->
                                 <div class="mt-20">
-                                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                                        <b>Edge Cases</b>
-                                        @if (!testCase.get('edgeCases').controls?.length) {
-                                        <button nz-button (click)="showEdgeCaseModal(testCase)" nzType="link">
-                                            <nz-icon nzType="plus"></nz-icon> Add Edge Case
-                                        </button>
-                                        }
-                                    </div>
-
-                                    <nz-list [nzHeader]="''">
-                                        @for (edgeCase of $any(testCase.get('edgeCases').controls); track edgeCase) {
-                                        <nz-list-item style="display: grid; grid-template-columns: 20px 1fr; column-gap: 20px;">
-                                            <span style="font-size: 21px;">🔨</span>
-                                            <div>
-                                                <div><b>If:</b> <i class="source-code-pro">{{edgeCase.get('title').value}}</i></div>
-                                                <div><b>Expected Result:</b> <span class="source-code-pro">{{edgeCase.get('expectation').value}}</span></div>
-                                            </div>
-                                        </nz-list-item>
-                                        }
-                                    </nz-list>
-
-                                    @if (testCase.get('edgeCases').controls?.length) {
-                                    <button nz-button (click)="showEdgeCaseModal(testCase)" nzBlock>🔨 Set Edge Case</button>
-                                    }
+                                    <b>Edge Cases</b>
+                                    <app-edge-case-form [formControl]="$any(testCase.get('edgeCases'))"></app-edge-case-form>
                                 </div>
                             </div>
 

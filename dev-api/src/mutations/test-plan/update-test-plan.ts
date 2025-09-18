@@ -110,6 +110,8 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
         const formTestCase = formFeature.testCases[i];
 
         if (formTestCase?._id) {
+          const idsToKeep: string[] = [];
+          
           for (let edgeCase of formTestCase.edgeCases ?? []) {
             if (!edgeCase._id) {
               const newEdgeCase = await EdgeCase.create({
@@ -120,6 +122,8 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
                 expectation: edgeCase.expectation,
                 order: edgeCase.order
               });
+
+              idsToKeep.push((newEdgeCase._id as Types.ObjectId).toString());
             } else {
               edgeCaseBulkWrite.push({
                 updateOne: {
@@ -133,8 +137,19 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
                   }
                 }
               });
+
+              idsToKeep.push(edgeCase._id);
             }
           }
+
+          const edgeCases = await EdgeCase.find({ testCase: formTestCase._id });
+          const deleteEdgeCaseIds = edgeCases.map((item) => (item._id as Types.ObjectId).toString()).filter((_id) => !idsToKeep.includes(_id));
+          console.log('To delete', deleteEdgeCaseIds);
+          edgeCaseBulkWrite.push({
+            deleteMany: {
+              filter: { _id: { $in: deleteEdgeCaseIds.map(_id => new Types.ObjectId(_id)) } }
+            }
+          });
 
           testCaseBulkWrite.push({
             updateOne: {

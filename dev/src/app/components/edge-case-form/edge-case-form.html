@@ -1,0 +1,32 @@
+<nz-list [nzHeader]="''">
+    @for (edgeCase of $any(edgeCases.controls); track edgeCase; let i = $index) {
+        @if (edgeCase.get('edit')?.value) {
+            <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
+                <label>If:</label>
+                <textarea nz-input rows="2" [formControl]="edgeCase.get('title')" placeholder="If email is valid but password is wrong" (blur)="onFieldBlur(i)"></textarea>
+            </nz-form-item>
+            <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
+                <label>Then:</label>
+                <textarea nz-input rows="2" [formControl]="edgeCase.get('expectation')" placeholder="show error" (blur)="onFieldBlur(i)"></textarea>
+            </nz-form-item>
+        } @else {
+            <nz-list-item style="display: grid; grid-template-columns: 20px 1fr 40px; column-gap: 20px;" (click)="makeEditable(i)">
+                <span style="font-size: 21px;">🔨</span>
+                <div>
+                    <div><b>If:</b> <i class="source-code-pro">{{edgeCase.get('title').value}}</i></div>
+                    <div><b>Expected Result:</b> <span class="source-code-pro">{{edgeCase.get('expectation').value}}</span></div>
+                </div>
+
+                <div>
+                    <button nz-button nzType="link" (click)="deleteNewEdgeCase(i); $event.stopPropagation()">
+                        <nz-icon nzType="delete"></nz-icon>
+                    </button>
+                </div>
+            </nz-list-item>
+        }
+
+        <nz-divider></nz-divider>
+    }
+</nz-list>
+
+<button nz-button (click)="addNewEdgeCaseInput()" nzBlock>🔨 Add Edge Case</button>

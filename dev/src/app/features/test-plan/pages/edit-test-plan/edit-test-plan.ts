@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import _cloneDeep from 'lodash.clonedeep';
 import { Deactivatable } from '../../../../guards/can-deactivate.guard';
 import { StepsForm } from '@qa/components/steps-form/steps-form';
+import { EdgeCaseForm } from '@qa/components/edge-case-form/edge-case-form';
 
 interface ITestEnvironment {
   _id?: string;
@@ -90,7 +91,8 @@ interface ITestPlanForm {
     NzPopconfirmModule,
     NzDividerModule,
     ReactiveFormsModule,
-    StepsForm
+    StepsForm,
+    EdgeCaseForm
 ],
   templateUrl: './edit-test-plan.html',
   styleUrl: './edit-test-plan.scss'
@@ -189,11 +191,11 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
             }))),
 
             // Populate edge cases
-            edgeCases: new FormArray((t.edgeCases ?? []).map((item: IEdgeCase, i: number) => new FormGroup({
-              _id: new FormControl(item._id),
-              title: new FormControl(item.title, [Validators.required]),
-              expectation: new FormControl(item.expectation, [Validators.required]),
-              order: new FormControl(item.order ?? i)
+            edgeCases: new FormControl((t.edgeCases ?? []).map((item: IEdgeCase, i: number) => ({
+              _id: item._id,
+              title: item.title,
+              expectation: item.expectation,
+              order: item.order ?? i
             })))
           }))
         )

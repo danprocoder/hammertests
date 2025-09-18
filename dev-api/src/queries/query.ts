@@ -35,8 +35,16 @@ export const query = {
   getTestRunCases: async (parent: any, { planId, testRunId }: any) => {
     return await TestRunCase.find({ planId, testRunId }).populate('edgeCases.edgeCaseId').populate('edgeCases.issue');
   },
-  getTestRuns: async (parent: any, { query }: any) => {
-    return await TestRun.find(query).sort({ createdAt: -1 });
+  getTestRuns: async (parent: any, { query }: any, context: IRequestContext) => {
+    if (!context.user) {
+      throw new GraphQLError('You must be logged in', {
+        extensions: {
+          code: 'UNAUTHENTICATED'
+        } 
+      });
+    }
+
+    return await TestRun.find({ ...query, project: context.user.project._id }).sort({ createdAt: -1 });
   },
   getTestRun: async (parent: any, args: any) => {
     const { id } = args;

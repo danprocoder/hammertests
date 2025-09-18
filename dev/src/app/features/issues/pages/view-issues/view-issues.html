@@ -4,26 +4,20 @@
   <nz-table #issuesTable [nzData]="issues" style="padding: 0;">
     <thead>
       <tr>
-        <th>Feature</th>
         <th>Title</th>
-        <th style="max-width: 250px;">Description</th>
+        <th>Feature</th>
         <th>Priority</th>
         <th>Status</th>
         <th>Date Created</th>
-        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let issue of issuesTable.data">
+        <td (click)="viewIssue(issue)">{{ issue.title }}</td>
         <td>{{ issue.feature?.name }}</td>
-        <td>{{ issue.title }}</td>
-        <td style="max-width: 250px;">{{ issue.description }}</td>
         <td>{{ issue.priority }}</td>
         <td>{{ issue.status }}</td>
         <td>{{ issue.createdAt | date: 'short' }}</td>
-        <td>
-          <button nz-button (click)="viewIssue(issue)">View</button>
-        </td>
       </tr>
     </tbody>
   </nz-table>
@@ -73,11 +67,20 @@
       </div>
 
       <div>
-        <div style="font-weight: bold;">Edgecase:</div>
         <div class="mt-10">
-          <b>If</b><br/>{{ selectedIssue?.edgeCase?.title }}
-          <br/>
-          <b>then</b><br/>{{ selectedIssue?.edgeCase?.expectation }}
+          <b>Feature</b>
+          <div>{{ selectedIssue?.feature?.name }}</div>
+        </div>
+        <div class="mt-10">
+          <b>Test Case</b>
+          <div>{{ selectedIssue?.testCase?.name }}</div>
+        </div>
+        <div class="mt-10">
+          <div style="font-weight: bold;">Edgecase:</div>
+          <div class="mt-5" style="display: grid; grid-template-columns: 50px 1fr;">
+            <b>If</b>{{ selectedIssue?.edgeCase?.title }}
+            <b>then</b>{{ selectedIssue?.edgeCase?.expectation }}
+          </div>
         </div>
       </div>
     </div>

@@ -42,6 +42,8 @@ export interface ITestRunCase {
 
 export interface IIssue {
   _id?: string;
+  feature: ITestFeature;
+  testCase: ITestCase;
   edgeCase: IEdgeCase;
   project: string;
   user: string;
@@ -49,7 +51,7 @@ export interface IIssue {
   description: string;
   stepsToReproduce: { step: string }[];
   priority: 'low' | 'medium' | 'high' | 'critical';
-  status: 'open' | 'in_progress' | 'closed';
+  status: 'open' | 'in_progress' | 'resolved';
   attachments: string[];
   createdAt?: string;
 }

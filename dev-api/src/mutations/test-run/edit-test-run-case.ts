@@ -41,6 +41,7 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
           project: req.user.project._id,
           user: req.user.user._id,
           feature: dbTestCase.featureId,
+          testCase: dbTestCase._id,
           edgeCase: edgeCase.edgeCaseId,
           title: edgeCase.issue.title,
           description: edgeCase.issue.description,

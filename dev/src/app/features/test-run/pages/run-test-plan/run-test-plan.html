@@ -78,7 +78,7 @@
                             </nz-badge>
                             } -->
 
-                            @if (edgeCase.status === 'failed') {
+                            @if (edgeCase.status && edgeCase.status !== 'passed') {
                             <button nz-button (click)="showEdgeCaseIssueModal(edgeCase)">
                                 <nz-icon nzType="bug"></nz-icon>
                                 Create Issue

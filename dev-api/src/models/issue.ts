@@ -1,16 +1,18 @@
 import mongoose, { Model, Schema, Document, Types } from "mongoose";
 
-type IssueStatus = 'open' | 'in_progress' | 'closed';
+type IssueStatus = 'open' | 'in_progress' | 'resolved';
 type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
 
 interface IIssue {
   project: Types.ObjectId,
   user: Types.ObjectId,
+  feature: Types.ObjectId,
+  testCase: Types.ObjectId,
   edgeCase: Types.ObjectId,
   title: string,
   description: string,
-  status: 'open' | 'in_progress' | 'closed',
-  priority: 'low' | 'medium' | 'high' | 'critical',
+  status: IssueStatus,
+  priority: IssuePriority,
   stepsToReproduce: { step: string }[],
   attachments: string[]
 }
@@ -30,6 +32,16 @@ const issueSchema = new Schema<IIssueDocument>({
     ref: 'User',
     required: true
   },
+  feature: {
+    type: Schema.Types.ObjectId,
+    ref: 'Feature',
+    required: true
+  },
+  testCase: {
+    type: Schema.Types.ObjectId,
+    ref: 'TestCase',
+    required: true
+  },
   edgeCase: {
     type: Schema.Types.ObjectId,
     ref: 'EdgeCase',
@@ -44,7 +56,7 @@ const issueSchema = new Schema<IIssueDocument>({
   },
   status: {
     type: String,
-    enum: ['open', 'in_progress', 'closed'],
+    enum: ['open', 'in_progress', 'resolved'],
     default: 'open'
   },
   priority: {

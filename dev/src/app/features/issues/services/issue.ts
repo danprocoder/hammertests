@@ -18,6 +18,14 @@ export class Issue {
         query {
           issues {
             _id
+            feature {
+              _id
+              name
+            }
+            testCase {
+              _id
+              name
+            }
             edgeCase {
               _id
               title

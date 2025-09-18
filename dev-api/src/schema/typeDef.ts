@@ -219,6 +219,8 @@ const typeDefs = gql`
 
   type Issue {
     _id: ID,
+    feature: TestFeature,
+    testCase: TestCase,
     edgeCase: TestCaseEdgeCase,
     title: String,
     description: String,

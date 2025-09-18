@@ -4,8 +4,9 @@
   <nz-table #issuesTable [nzData]="issues" style="padding: 0;">
     <thead>
       <tr>
+        <th>Feature</th>
         <th>Title</th>
-        <th>Description</th>
+        <th style="max-width: 250px;">Description</th>
         <th>Priority</th>
         <th>Status</th>
         <th>Date Created</th>
@@ -14,8 +15,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let issue of issuesTable.data">
+        <td>{{ issue.feature?.name }}</td>
         <td>{{ issue.title }}</td>
-        <td>{{ issue.description }}</td>
+        <td style="max-width: 250px;">{{ issue.description }}</td>
         <td>{{ issue.priority }}</td>
         <td>{{ issue.status }}</td>
         <td>{{ issue.createdAt | date: 'short' }}</td>
@@ -50,7 +52,7 @@
 
         <div class="mt-10">
           <div style="font-weight: bold;">Description</div>
-          <p>{{ selectedIssue?.description }}</p>
+          <p style="white-space: pre-wrap;">{{ selectedIssue?.description }}</p>
         </div>
 
         <div class="mt-10">

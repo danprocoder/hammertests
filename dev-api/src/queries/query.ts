@@ -53,7 +53,7 @@ export const query = {
 
     const issues = await Issue.find({
       project: context.user.project._id
-    }).populate('edgeCase').sort({ createdAt: -1 });
+    }).populate(['edgeCase', 'testCase', 'feature']).sort({ createdAt: -1 });
 
     return issues;
   },

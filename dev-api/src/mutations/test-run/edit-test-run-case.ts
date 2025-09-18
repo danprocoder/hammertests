@@ -40,6 +40,7 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
         const newIssue = await Issue.create({
           project: req.user.project._id,
           user: req.user.user._id,
+          feature: dbTestCase.featureId,
           edgeCase: edgeCase.edgeCaseId,
           title: edgeCase.issue.title,
           description: edgeCase.issue.description,

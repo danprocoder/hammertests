@@ -83,11 +83,9 @@ interface ITestPlanForm {
     NzIconModule,
     NzListModule,
     NzButtonModule,
-    NzModalModule,
     NzFormModule,
     NzInputModule,
     NzSelectModule,
-    NzListModule,
     NzPopconfirmModule,
     NzDividerModule,
     ReactiveFormsModule,
@@ -115,9 +113,6 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
   selectedTestCase: FormArray | null = null;
   testDataForm: FormGroup | any = null;
   testDataIndex: number | undefined;
-
-  edgeCaseModalVisible = false;
-  edgeCaseForm: FormArray | any = null;
 
   ready = false;
   readyError = false;
@@ -307,48 +302,6 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     const above = (testCases.controls[index - 1] as FormGroup).controls['order'];
     current.setValue(current.value - 1);
     above.setValue(above.value + 1);
-  }
-
-  /*
-   * EDGE CASE MODAL FUNCTIONS 
-   */
-  showEdgeCaseModal(testCase: any): void {
-    this.selectedTestCase = testCase;
-    this.edgeCaseModalVisible = true;
-    this.edgeCaseForm = new FormArray([]);
-    testCase.get('edgeCases').value.forEach((edgeCase: any) => {
-      this.addEdgeCaseInput(edgeCase);
-    });
-  }
-
-  addEdgeCaseInput(data?: IEdgeCase): void {
-    this.edgeCaseForm.push(new FormGroup({
-      _id: new FormControl(data?._id),
-      title: new FormControl(data?.title, [Validators.required]),
-      expectation: new FormControl(data?.expectation, [Validators.required]),
-      order: new FormControl(data?.order ?? this.edgeCaseForm.controls.length),
-      testData: new FormArray([])
-    }));
-  }
-
-  closeEdgeCaseModal(): void {
-    this.edgeCaseModalVisible = false;
-    this.selectedTestCase = null;
-    this.edgeCaseForm = null;
-  }
-
-  saveEdgeCases(): void {
-    const edgeCases = this.selectedTestCase?.get('edgeCases') as FormArray;
-    edgeCases.clear();
-    this.edgeCaseForm.value.forEach((edgeCase: IEdgeCase, i: number) => {
-      edgeCases.push(new FormGroup({
-        _id: new FormControl(edgeCase._id),
-        title: new FormControl(edgeCase.title),
-        expectation: new FormControl(edgeCase.expectation),
-        order: new FormControl(edgeCase.order)
-      }));
-    });
-    this.closeEdgeCaseModal();
   }
 
   getPayload(): { [field: string]: any } {

@@ -119,32 +119,3 @@
 @if (!ready && readyError) {
     <h1>Page failed to load</h1>
 }
-
-
-
-<nz-modal [(nzVisible)]="edgeCaseModalVisible" (nzOnCancel)="closeEdgeCaseModal()" [nzOkDisabled]="!edgeCaseForm?.valid" (nzOnOk)="saveEdgeCases()" nzTitle="Edge Cases">
-    <ng-container *nzModalContent>
-    @if (edgeCaseModalVisible) {
-        <div nz-form nzLayout="vertical" [formGroup]="edgeCaseForm">
-            @for (edgeCase of $any(edgeCaseForm).controls; track edgeCase) {
-            <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
-                <label>If:</label>
-                <textarea nz-input rows="2" [formControl]="edgeCase.get('title')" placeholder="If email is valid but password is wrong"></textarea>
-            </nz-form-item>
-            <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
-                <label>Then:</label>
-                <textarea nz-input rows="2" [formControl]="edgeCase.get('expectation')" placeholder="show error"></textarea>
-            </nz-form-item>
-
-            <nz-divider></nz-divider>
-            }
-            <div class="mt-20">
-                <button nz-button (click)="addEdgeCaseInput()" style="width: 100%;">
-                    <nz-icon nzType="plus"></nz-icon>
-                    Add Edge Case
-                </button>
-            </div>
-        </div>
-    }
-    </ng-container>
-</nz-modal>

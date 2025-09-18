@@ -23,7 +23,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzAffixModule } from 'ng-zorro-antd/affix';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { AuthGuard } from '../../guards/auth.guard';
-import { CreateEdgeCaseIssueModal } from './pages/run-test-plan/components/create-edge-case-issue-modal/create-edge-case-issue-modal';
+import { CreateEdgeCaseIssueModal } from '../../components/create-edge-case-issue-modal/create-edge-case-issue-modal';
 
 const routes: Route[] = [
   {

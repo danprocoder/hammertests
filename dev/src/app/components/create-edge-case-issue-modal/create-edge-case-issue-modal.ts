@@ -1,16 +1,18 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
-import { IIssue } from '../../../../../../models/test-run.model';
+import { IIssue } from '../../models/test-run.model';
+import { StepsForm } from '@qa/components/steps-form/steps-form';
 
 @Component({
   selector: 'app-create-edge-case-issue-modal',
   imports: [
+    StepsForm,
     NzButtonModule,
     NzIconModule,
     NzModalModule,
@@ -29,8 +31,6 @@ export class CreateEdgeCaseIssueModal {
 
   @Input() edgeCase: any = null;
 
-  @ViewChild('stepInput', { static: false }) stepInput?: ElementRef<HTMLTextAreaElement>;
-
   issueForm: FormGroup;
   attachments: any[] = [];
 
@@ -38,13 +38,13 @@ export class CreateEdgeCaseIssueModal {
     this.issueForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
-      stepsToReproduce: this.fb.array([]),
+      stepsToReproduce: [],
     });
   }
 
   ngOnChanges(): void {
     this.issueForm.reset();
-    this.steps.clear();
+    // this.steps.clear(); // TODO: Move this
 
     if (this.edgeCase && this.edgeCase.issue) {
       this.setupForm(this.edgeCase.issue);
@@ -54,60 +54,9 @@ export class CreateEdgeCaseIssueModal {
   setupForm(issue: IIssue): void {
     this.issueForm.patchValue({
       title: issue.title,
-      description: issue.description
+      description: issue.description,
+      stepsToReproduce: issue.stepsToReproduce
     });
-
-    if (issue.stepsToReproduce && issue.stepsToReproduce.length) {
-      issue.stepsToReproduce.forEach(s => {
-        this.steps.push(this.fb.group({
-          step: this.fb.control(s.step, Validators.required),
-          edit: this.fb.control(false)
-        }));
-      });
-    }
-  }
-
-  addStep(): void {
-    this.steps.push(this.fb.group({
-      step: this.fb.control('', Validators.required),
-      edit: this.fb.control(true)
-    }));
-
-    setTimeout(() => {
-      this.stepInput?.nativeElement.focus();
-    }, 50);
-  }
-
-  onStepBlur(index: number): void {
-    const step = this.steps.at(index);
-    step.get('edit')?.setValue(false);
-  }
-
-  editStep(index: number): void {
-    const step = this.steps.at(index);
-    step.get('edit')?.setValue(true);
-  }
-
-  removeStep(index: number): void {
-    this.steps.removeAt(index);
-  }
-
-  onSaveStep(index: number): void {
-    this.onStepBlur(index);
-    
-    if (index == this.steps.length - 1) {
-      this.addStep();
-    }
-  }
-
-  onStepsKeyDown(ev: KeyboardEvent, index: number): void {
-    if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
-      this.onSaveStep(index);
-    }
-  }
-
-  get steps(): FormArray {
-    return this.issueForm.get('stepsToReproduce') as FormArray;
   }
 
   createIssue(): void {

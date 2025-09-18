@@ -26,7 +26,11 @@ export class Dashboard {
   }
 
   showChart(stat: ITestRun['stat']): void {
-    const chart = new Chart(this.pieChartCanvas?.nativeElement!, {
+    if (!stat) {
+      return;
+    }
+
+    new Chart(this.pieChartCanvas?.nativeElement!, {
       type: 'pie',
       data: {
         labels: [

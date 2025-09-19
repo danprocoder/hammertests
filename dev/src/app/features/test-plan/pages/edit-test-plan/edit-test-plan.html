@@ -38,10 +38,10 @@
                         <div style="display: flex; gap: 10px;">
                             <div style="flex: 1; font-weight: 600;">{{ $any(feature.get('name')).value }}</div>
 
-                            <button nz-button (click)="moveFeatureUp(featureIndex)">
+                            <button nz-button (click)="moveFeatureUp(featureIndex); $event.stopPropagation();">
                                 <i nz-icon nzType="up"></i>
                             </button>
-                            <button nz-button (click)="moveFeatureDown(featureIndex)">
+                            <button nz-button (click)="moveFeatureDown(featureIndex); $event.stopPropagation();">
                                 <i nz-icon nzType="down"></i>
                             </button>
                             <button nz-button nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete this?" (nzOnConfirm)="deleteFeatureAt($any(formGroup.get('features')), featureIndex)">

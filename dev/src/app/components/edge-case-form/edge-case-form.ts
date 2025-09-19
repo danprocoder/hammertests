@@ -6,6 +6,7 @@ import { NzFormModule } from "ng-zorro-antd/form";
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { NzInputModule } from "ng-zorro-antd/input";
 import { NzListModule } from "ng-zorro-antd/list";
+import { Clipboard } from "../../services/clipboard";
 
 interface IEdgeCaseFormValue extends IEdgeCase {
   edit: boolean;
@@ -39,18 +40,18 @@ export class EdgeCaseForm implements ControlValueAccessor {
 
   edgeCases: FormArray;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private clipboard: Clipboard) {
     this.edgeCases = this.fb.array([]);
   }
 
   writeValue(value: IEdgeCase[]) {
     if (value && Array.isArray(value)) {
-      value.forEach((data) => {
+      value.forEach((data, i) => {
         this.edgeCases.push(this.fb.group({
           _id: data?._id,
           title: [data.title, Validators.required],
           expectation: [data.expectation, Validators.required],
-          order: [data.order],
+          order: [data.order ?? i],
           edit: [false]
         }));
       });
@@ -77,12 +78,16 @@ export class EdgeCaseForm implements ControlValueAccessor {
   }
 
   addNewEdgeCaseInput(): void {
-    const maxOrder = Math.max(...this.edgeCases.controls.map(control => control.value.order)) ?? 0;
+    let nextOrder = 0;
+    const orders = this.edgeCases.controls.map(control => control.value.order);
+    if (orders.length) {
+      nextOrder = Math.max(...orders) + 1;
+    }
 
     this.edgeCases.push(this.fb.group({
       title: ['', Validators.required],
       expectation: ['', Validators.required],
-      order: maxOrder + 1,
+      order: nextOrder,
       edit: [true]
     }));
   }
@@ -91,7 +96,7 @@ export class EdgeCaseForm implements ControlValueAccessor {
     this.edgeCases.removeAt(i);
   }
 
-  onFieldBlur(i: number): void {
+  saveEdgeCase(i: number): void {
     this.edgeCases.at(i).patchValue({ edit: false });
   }
 
@@ -99,5 +104,29 @@ export class EdgeCaseForm implements ControlValueAccessor {
     this.edgeCases.controls.forEach(control => control.patchValue({ edit: false }));
 
     this.edgeCases.at(i).patchValue({ edit: true });
+  }
+
+  copyToClipboard(i: number): void {
+    const edgeCase = this.edgeCases.at(i).value;
+    this.clipboard.copyToClipboard('edge_case', JSON.stringify({
+      title: edgeCase.title,
+      expectation: edgeCase.expectation
+    }));
+  }
+
+  pasteFromClipboard(i: number): void {
+    this.clipboard.readFromClipboard('edge_case').then(data => {
+      if (data) {
+        const parsed = JSON.parse(data);
+        this.edgeCases.at(i).patchValue({
+          title: parsed.title,
+          expectation: parsed.expectation
+        });
+      }
+    });
+  }
+
+  existsInClipboard(): boolean {
+    return this.clipboard.exists('edge_case');
   }
 }

@@ -24,6 +24,8 @@ import { NzAffixModule } from 'ng-zorro-antd/affix';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { AuthGuard } from '../../guards/auth.guard';
 import { CreateEdgeCaseIssueModal } from '../../components/create-edge-case-issue-modal/create-edge-case-issue-modal';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 const routes: Route[] = [
   {
@@ -58,6 +60,7 @@ const routes: Route[] = [
     RouterModule.forChild(routes),
     CommonModule,
     FormsModule,
+    NzCardModule,
     NzAffixModule,
     NzBadgeModule,
     NzUploadModule,

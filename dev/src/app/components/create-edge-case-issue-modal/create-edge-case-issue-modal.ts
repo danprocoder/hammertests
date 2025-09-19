@@ -5,7 +5,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { IIssue } from '../../models/test-run.model';
 import { StepsForm } from '@qa/components/steps-form/steps-form';
 
@@ -32,7 +32,7 @@ export class CreateEdgeCaseIssueModal {
   @Input() edgeCase: any = null;
 
   issueForm: FormGroup;
-  attachments: any[] = [];
+  attachments: NzUploadFile[] = [];
 
   constructor(private fb: FormBuilder) {
     this.issueForm = this.fb.group({
@@ -44,7 +44,6 @@ export class CreateEdgeCaseIssueModal {
 
   ngOnChanges(): void {
     this.issueForm.reset();
-    // this.steps.clear(); // TODO: Move this
 
     if (this.edgeCase && this.edgeCase.issue) {
       this.setupForm(this.edgeCase.issue);
@@ -65,7 +64,7 @@ export class CreateEdgeCaseIssueModal {
       ...value,
       // _id is needed if editing an existing issue
       ...(this.edgeCase.issue ? { _id: this.edgeCase.issue._id } : {}),
-      stepsToReproduce: value.stepsToReproduce.map((s: any) => {
+      stepsToReproduce: (value.stepsToReproduce ?? []).map((s: any) => {
         return { step: s.step };
       })
     });

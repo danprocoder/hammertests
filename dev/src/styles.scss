@@ -72,6 +72,10 @@ $spacings: 5, 10, 20, 40, 80;
         justify-content: space-between;
     }
 
+    &.justify-end {
+        justify-content: flex-end;
+    }
+
     &-column {
         display: flex;
         flex-direction: column;

@@ -16,6 +16,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     { provide: NZ_I18N, useValue: en_US },
     NzMessageService,
+    Clipboard,
     provideAnimations(),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),

@@ -79,9 +79,9 @@ export class RunTestPlan {
   }[] = [
     { icon: '✅', value: 'passed', name: 'Passed' },
     { icon: '⚠️', value: 'passed-with-warnings', name: 'Passed with Warnings' },
-    { icon: '❌', value: 'needs-a-retest', name: 'Needs a Retest' },
+    { icon: '🔄', value: 'needs-a-retest', name: 'Needs a Retest' },
     { icon: '🚫', value: 'blocked', name: 'Blocked' },
-    { icon: '🔄', value: 'failed', name: 'Failed' },
+    { icon: '❌', value: 'failed', name: 'Failed' },
   ];
 
   constructor(

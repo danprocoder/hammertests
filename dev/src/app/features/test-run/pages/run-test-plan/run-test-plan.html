@@ -1,7 +1,7 @@
 @let testCase = testCases[testCasePosition];
 
 @if (ready) {
-<div>
+<nz-card>
     <nz-affix>
         <div style="background: white; padding-bottom: 10px;">
             <div style="font-size: 24px; font-weight: bold;">{{ title }}</div>
@@ -168,7 +168,7 @@
         <button nz-button (click)="onPrevClick()" [disabled]="!canGoPrev()">Prev</button>
         <button nz-button (click)="onNextClick()" [disabled]="!canGoNext()">Next</button>
     </div>
-</div>
+</nz-card>
 }
 
 <app-create-edge-case-issue-modal

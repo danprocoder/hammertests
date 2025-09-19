@@ -241,8 +241,8 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     testCases.push(new FormGroup({
       name: new FormControl('', [Validators.required]),
       description: new FormControl(''),
-      stepsToTest: new FormArray([]),
-      edgeCases: new FormArray([]),
+      stepsToTest: new FormControl([]),
+      edgeCases: new FormControl([]),
       order: new FormControl(testCases.controls.length)
     }));
   }

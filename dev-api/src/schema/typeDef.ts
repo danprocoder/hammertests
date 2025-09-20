@@ -114,7 +114,8 @@ const typeDefs = gql`
     totalBlocked: Int,
     totalNeedsARetest: Int,
     totalPassedWithWarnings: Int,
-    totalRun: Int
+    totalRun: Int,
+    totalEdgeCases: Int
   }
 
   type TestRunCase {

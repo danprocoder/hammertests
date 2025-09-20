@@ -13,7 +13,7 @@ interface ITestFeatureDocument extends ITestFeature, Document {}
 
 interface ITestFeatureModel extends Model<ITestFeatureDocument> {}
 
-const TestFeature = model<ITestFeatureDocument, ITestFeatureModel>('Feature', new Schema({
+const testFeatureSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -38,7 +38,9 @@ const TestFeature = model<ITestFeatureDocument, ITestFeatureModel>('Feature', ne
     type: Number,
     defaultValue: 0
   }
-}, { timestamps: true }));
+}, { timestamps: true });
+
+const TestFeature = model<ITestFeatureDocument, ITestFeatureModel>('Feature', testFeatureSchema);
 
 export { TestFeature };
 export type { ITestFeature, ITestFeatureDocument };

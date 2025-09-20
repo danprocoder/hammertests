@@ -1,7 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { IRequestContext, Issue, TestCase, TestRun, TestRunCase } from "@qa/models";
-import { updateTestRunCaseStats } from './mark-test-run-as-finished';
-import { Types } from 'mongoose';
+import { calTestRunStats } from '../../utils';
 
 export const editTestRunCaseMutator = async (parent: any, args: any, context: IRequestContext) => {
   if (!context.user) {
@@ -78,14 +77,7 @@ export const editTestRunCaseMutator = async (parent: any, args: any, context: IR
     });
   }
 
-  const stat = await updateTestRunCaseStats(new Types.ObjectId(testRunId));
-  const update: { [key: string]: number } = {};
-  Object.entries(stat).forEach(([key, value]) => {
-    update[`stat.${key}`] = value;
-  });
-  const updateQuery = { $set: update };
-  context.logger.info('Updating test run stats on edit', { updateQuery });
-  await testRun.updateOne(updateQuery);
+  await calTestRunStats(testRun);
 
   return runTc;
 };

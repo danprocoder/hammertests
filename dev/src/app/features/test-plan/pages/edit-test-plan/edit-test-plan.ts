@@ -219,7 +219,7 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     const feature = features.controls[index].value;
     if (feature._id) {
       this.deletedFeatures.push(feature._id);
-      feature.testCases.forEach((testCase: any) => {console.log(testCase);
+      feature.testCases.forEach((testCase: any) => {
         if (testCase._id) {
           this.deletedTestCases.push(testCase._id);
         }
@@ -228,16 +228,20 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     features.removeAt(index);
   }
 
-  getSortedFeatures(): AbstractControl<any, any>[] {
+  get sortedFeatures(): AbstractControl<any, any>[] {
     const features: FormArray = this.formGroup.get('features') as FormArray;
-    return features.controls
-      .filter(control =>
-        control.value.name
-        && control.value.name.trim().toLowerCase().includes(this.searchText.trim().toLowerCase())
-      )
+    const sorted = features.controls
+      .filter(control => {
+        if (this.searchText.trim() !== '') {
+          return control.value.name && control.value.name.trim().toLowerCase().includes(this.searchText.trim().toLowerCase());
+        }
+
+        return true;
+      })
       .sort((a: any, b: any) => {
         return a.controls['order'].value - b.controls['order'].value;
       });
+    return sorted;
   }
 
   addTestCase(testCases: FormArray): void {

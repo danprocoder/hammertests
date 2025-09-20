@@ -1,6 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { IRequestContext, TestPlan, TestFeature, TestCase, EdgeCase } from '@qa/models';
 import { Types } from 'mongoose';
+import { calTestRunStats, syncDeleted } from '../../utils';
 
 type UpdateTestPlanArgs = {
   id: string,
@@ -144,7 +145,6 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
 
           const edgeCases = await EdgeCase.find({ testCase: formTestCase._id });
           const deleteEdgeCaseIds = edgeCases.map((item) => (item._id as Types.ObjectId).toString()).filter((_id) => !idsToKeep.includes(_id));
-          console.log('To delete', deleteEdgeCaseIds);
           edgeCaseBulkWrite.push({
             deleteMany: {
               filter: { _id: { $in: deleteEdgeCaseIds.map(_id => new Types.ObjectId(_id)) } }
@@ -216,4 +216,8 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
   await TestFeature.bulkWrite(featureBulkWrite);
   await TestCase.bulkWrite(testCaseBulkWrite);
   await EdgeCase.bulkWrite(edgeCaseBulkWrite);
+
+  // Remember affected test runs
+  const affectedTestRuns = await syncDeleted(new Types.ObjectId(testPlanArgs.id));
+  await Promise.all(affectedTestRuns.map(tr => calTestRunStats(tr)));
 }

@@ -41,7 +41,7 @@
         </ng-template>
 
         <nz-collapse [nzBordered]="false" class="mt-10">
-            @for (feature of getSortedFeatures(); track feature; let featureIndex = $index) {
+            @for (feature of sortedFeatures; track feature; let featureIndex = $index) {
                 <nz-collapse-panel [nzHeader]="templateHeader">
                     <ng-template #templateHeader>
                         <div style="display: flex; gap: 10px;">

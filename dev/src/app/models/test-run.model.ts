@@ -18,12 +18,14 @@ export interface ITestRunstat {
   totalBlocked: number,
   totalNeedsARetest: number,
   totalPassedWithWarnings: number,
-  totalRun: number
+  totalRun: number,
+  totalEdgeCases: number
 }
 
 export interface ITestRun {
   _id: string;
   planId: string;
+  plan: { name: string };
   stat: ITestRunstat;
   status: 'running' | 'completed';
   testCases: ITestRunCase[];

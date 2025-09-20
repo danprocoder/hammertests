@@ -28,7 +28,8 @@ export class DashboardService {
               totalBlocked,
               totalNeedsARetest,
               totalPassedWithWarnings,
-              totalRun
+              totalRun,
+              totalEdgeCases
             }
           },
           recentIssues {
@@ -41,6 +42,18 @@ export class DashboardService {
           recentTestRuns {
             _id,
             planId,
+            plan {
+              name
+            },
+            stat {
+              totalPassed,
+              totalFailed,
+              totalBlocked,
+              totalNeedsARetest,
+              totalPassedWithWarnings,
+              totalRun,
+              totalEdgeCases
+            },
             createdAt
           }
         }

@@ -83,4 +83,8 @@ export class Dashboard {
       }
     });
   }
+
+  getPercentage(testRun: ITestRun): number {
+    return Math.floor((testRun.stat.totalRun / testRun.stat.totalEdgeCases) * 100);
+  }
 }

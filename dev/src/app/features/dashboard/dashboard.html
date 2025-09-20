@@ -60,9 +60,9 @@
                 <tbody>
                     @for (run of activeTestRunsTable.data; track run._id) {
                         <tr>
-                            <td><a [routerLink]="'/dashboard/run/' + run.planId + '/' + run._id">{{ run.planId }}</a></td>
+                            <td><a [routerLink]="'/dashboard/run/' + run.planId + '/' + run._id">{{ run.plan.name }}</a></td>
                             <td>{{ run.createdAt | date: 'short' }}</td>
-                            <td>50%</td>
+                            <td>{{ getPercentage(run) }}%</td>
                         </tr>
                     }
             </nz-table>

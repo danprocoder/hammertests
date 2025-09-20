@@ -13,7 +13,7 @@ export const startTestRunMutator = async (parent: any, args: any, { user }: IReq
   const { planId, environment, variables, modulesToTest } = args;
 
   const testCaseQuery: any = { planId };
-  if (modulesToTest.length) {
+  if (modulesToTest && modulesToTest.length) {
     testCaseQuery.featureId = { $in: modulesToTest };
   }
   const testCaseIds = (await TestCase.find(testCaseQuery)).map(tc => tc._id);

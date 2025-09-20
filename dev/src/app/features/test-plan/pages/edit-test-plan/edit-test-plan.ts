@@ -207,11 +207,18 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
 
   addToFeatures(): void {
     const featuresArr = this.formGroup.get('features') as FormArray;
+
+    let nextOrder = 0;
+    let orders = featuresArr.controls.map(c => c.value.order);
+    if (orders.length) {
+      nextOrder = Math.max(...orders) + 1;
+    }
+
     featuresArr.push(new FormGroup<any>({
       name: new FormControl('', [Validators.required]),
       url: new FormControl(''),
       testCases: new FormArray<any>([]),
-      order: new FormControl(featuresArr.length)
+      order: new FormControl(nextOrder)
     }))
   }
 
@@ -263,22 +270,26 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     testCases.removeAt(index);
   }
 
-
   moveFeatureUp(currentIndex: number): void {
-    const features = this.formGroup.get('features') as FormArray;
+    if (currentIndex == 0) {
+      return;
+    }
 
-    const contentBefore = (features.controls[currentIndex - 1] as FormGroup).controls['order'];
-    const selected = (features.controls[currentIndex] as FormGroup).controls['order'];
+    const features = this.sortedFeatures;
+    const contentBefore = (features[currentIndex - 1] as FormGroup).controls['order'];
+    const selected = (features[currentIndex] as FormGroup).controls['order'];
 
     contentBefore.setValue(contentBefore.value + 1);
     selected.setValue(contentBefore.value - 1);
   }
 
   moveFeatureDown(currentIndex: number): void {
-    const features = this.formGroup.get('features') as FormArray;
-
-    const selected = (features.controls[currentIndex] as FormGroup).controls['order'];
-    const contentAfter = (features.controls[currentIndex + 1] as FormGroup).controls['order'];
+    const features = this.sortedFeatures;
+    if (currentIndex == features.length - 1) {
+      return;
+    }
+    const selected = (features[currentIndex] as FormGroup).controls['order'];
+    const contentAfter = (features[currentIndex + 1] as FormGroup).controls['order'];
 
     selected.setValue(selected.value + 1);
     contentAfter.setValue(selected.value - 1);

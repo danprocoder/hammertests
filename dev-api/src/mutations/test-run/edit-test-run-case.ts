@@ -3,8 +3,8 @@ import { IRequestContext, Issue, TestCase, TestRun, TestRunCase } from "@qa/mode
 import { updateTestRunCaseStats } from './mark-test-run-as-finished';
 import { Types } from 'mongoose';
 
-export const editTestRunCaseMutator = async (parent: any, args: any, req: IRequestContext) => {
-  if (!req.user) {
+export const editTestRunCaseMutator = async (parent: any, args: any, context: IRequestContext) => {
+  if (!context.user) {
     throw new GraphQLError('You must be logged in', {
       extensions: {
         code: 'UNAUTHENTICATED'
@@ -14,13 +14,20 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
 
   const { planId, testRunId, testCase: testRunCase } = args;
 
+  const testRun = await TestRun.findOne({ _id: testRunId, planId });
+  if (!testRun) {
+    context.logger.error('Test run not found on test run case edit', { testRunId, planId });
+    throw new GraphQLError('Test run not found');
+  }
+
   const dbTestCase = await TestCase.findOne({ _id: testRunCase.testCaseId, planId });
   if (!dbTestCase) {
+    context.logger.error('Test case not found on test run case edit', { testRunCaseId: testRunCase.testCaseId, planId });
     throw new GraphQLError('Test case not found');
   }
   
   let runTc = await TestRunCase.findOne({
-    user: req.user.user._id,
+    user: context.user.user._id,
     planId,
     testRunId,
     testCaseId: testRunCase.testCaseId
@@ -38,8 +45,8 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
         edgeCase.issue = edgeCase.issue._id;
       } else {
         const newIssue = await Issue.create({
-          project: req.user.project._id,
-          user: req.user.user._id,
+          project: context.user.project._id,
+          user: context.user.user._id,
           feature: dbTestCase.featureId,
           testCase: dbTestCase._id,
           edgeCase: edgeCase.edgeCaseId,
@@ -60,7 +67,7 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
     });
   } else {
     runTc = await TestRunCase.create({
-      user: req.user.user._id,
+      user: context.user.user._id,
       planId,
       testRunId,
       featureId: dbTestCase.featureId,
@@ -72,7 +79,13 @@ export const editTestRunCaseMutator = async (parent: any, args: any, req: IReque
   }
 
   const stat = await updateTestRunCaseStats(new Types.ObjectId(testRunId));
-  await TestRun.updateOne({ _id: testRunId }, { stat });
+  const update: { [key: string]: number } = {};
+  Object.entries(stat).forEach(([key, value]) => {
+    update[`stat.${key}`] = value;
+  });
+  const updateQuery = { $set: update };
+  context.logger.info('Updating test run stats on edit', { updateQuery });
+  await testRun.updateOne(updateQuery);
 
   return runTc;
 };

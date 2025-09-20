@@ -2,7 +2,6 @@ import mongoose, { Model, Schema, Document, Types } from "mongoose";
 
 interface IEdgeCase {
   user: Types.ObjectId,
-  plan: Types.ObjectId,
   testCase: Types.ObjectId,
   title: string,
   expectation: string,
@@ -17,11 +16,6 @@ const edgeCaseSchema = new Schema<IEdgeCaseDocument>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
-  },
-  plan: {
-    type: Schema.Types.ObjectId,
-    ref: 'TestPlan',
     required: true
   },
   testCase: {

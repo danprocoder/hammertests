@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql';
-import { IRequestContext, TestPlan, TestRun } from "@qa/models";
+import { EdgeCase, IRequestContext, TestCase, TestPlan, TestRun } from "@qa/models";
 
 export const startTestRunMutator = async (parent: any, args: any, { user }: IRequestContext) => {
   if (!user) {
@@ -11,11 +11,22 @@ export const startTestRunMutator = async (parent: any, args: any, { user }: IReq
   }
 
   const { planId, environment, variables, modulesToTest } = args;
+
+  const testCaseQuery: any = { planId };
+  if (modulesToTest.length) {
+    testCaseQuery.featureId = { $in: modulesToTest };
+  }
+  const testCaseIds = (await TestCase.find(testCaseQuery)).map(tc => tc._id);
+  const sumEdgeCases = await EdgeCase.countDocuments({ testCase: { $in: testCaseIds } });
+
   const testRun = await TestRun.create({
     project: user.project._id,
     user: user.user._id,
     planId,
     environment,
+    stat: {
+      totalEdgeCases: sumEdgeCases,
+    },
     variables,
     modulesToTest
   });

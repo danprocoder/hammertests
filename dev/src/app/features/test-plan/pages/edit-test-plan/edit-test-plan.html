@@ -1,11 +1,12 @@
 @if (ready) {
-<div class="mt-20">
+<div>
     @if (plan) {
     <h2>Edit Test Plan</h2>
     } @else {
     <h2>Create Test Plan</h2>
     }
 
+    <nz-card class="mt-20">
     <div>
         Name:<br />
         <input nz-input [formControl]="$any(formGroup.get('name'))" style="width: 100%" />
@@ -31,8 +32,16 @@
 
     <div class="mt-20">
         Features:<br />
-        <nz-collapse [nzBordered]="false">
-            @for (feature of getSortedFeatures(formGroup.get('features')); track feature; let featureIndex = $index) {
+
+        <nz-input-group [nzSuffix]="suffixIconSearch" class="mt-5">
+            <input type="text" nz-input nzBlock placeholder="Filter features here..." [(ngModel)]="searchText" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+            <nz-icon nzType="search" />
+        </ng-template>
+
+        <nz-collapse [nzBordered]="false" class="mt-10">
+            @for (feature of getSortedFeatures(); track feature; let featureIndex = $index) {
                 <nz-collapse-panel [nzHeader]="templateHeader">
                     <ng-template #templateHeader>
                         <div style="display: flex; gap: 10px;">
@@ -53,52 +62,59 @@
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
                         <input nz-input [formControl]="$any(feature.get('name'))" style="width: 440px;" placeholder="Login" />
                         <input nz-input [formControl]="$any(feature.get('url'))" style="width: 440px;" placeholder="/login" />
-
-                        <div><b>Test Cases</b> ({{ $any(feature.get('testCases')).controls.length }})</div>
+                    </div>
+                    
+                    <div class="mt-10">
+                        <b>Test Cases</b> ({{ $any(feature.get('testCases')).controls.length }})
                     </div>
 
-                    <div>
-                        @for (testCase of getSortedTestCases(feature.get('testCases')); track testCase; let i = $index) {
-                        <div style="border-top: 1px solid gray; padding-top: 10px; display: flex; gap: 10px;" class="mt-10">
-                            <div style="flex: 1; background: #f3f3f3; padding: 10px;">
-                                <input nz-input [formControl]="$any(testCase.get('name'))" placeholder="Login with valid credentials" />
-                                <br />
-                                <textarea
-                                    nz-input
-                                    [formControl]="$any(testCase.get('description'))"
-                                    style="margin-top: 5px; width: 100%;"
-                                    placeholder="Describe the test case..."
-                                ></textarea>
+                    <nz-collapse nzAccordion class="mt-10">
+                        @for (testCase of getSortedTestCases(feature); track testCase; let i = $index) {
+                        <ng-template #templateHeader>
+                            <button nz-button (click)="moveUp(feature, i); $event.stopPropagation();">
+                                <i nz-icon nzType="up"></i>
+                            </button>
+                            <button nz-button (click)="moveDown(feature, i); $event.stopPropagation();">
+                                <i nz-icon nzType="down"></i>
+                            </button>
+                            <button nz-button nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete this?"
+                                (nzOnConfirm)="deleteTestCaseAt(feature, i)" (click)="$event.stopPropagation();">
+                                <i nz-icon nzType="delete"></i>
+                            </button>
+                        </ng-template>
+                        <nz-collapse-panel [nzHeader]="$any(testCase.get('name')).value" [nzExtra]="templateHeader">
+                            <div style="display: flex; gap: 10px;" class="mt-10">
+                                <div style="flex: 1;">
+                                    <input nz-input [formControl]="$any(testCase.get('name'))" placeholder="Login with valid credentials" />
+                                    <br />
+                                    <textarea
+                                        nz-input
+                                        [formControl]="$any(testCase.get('description'))"
+                                        style="margin-top: 5px; width: 100%;"
+                                        placeholder="Describe the test case..."
+                                    ></textarea>
 
-                                <!-- Steps to test -->
-                                <div class="mt-20">
-                                    <b>Steps to test</b>
-                                    <app-steps-form [formControl]="$any(testCase.get('stepsToTest'))"></app-steps-form>
-                                </div>
+                                    <!-- Steps to test -->
+                                    <div class="mt-20">
+                                        <b>Steps to test</b>
+                                        <app-steps-form [formControl]="$any(testCase.get('stepsToTest'))"></app-steps-form>
+                                    </div>
 
-                                <!-- Edge cases -->
-                                <div class="mt-20">
-                                    <b>Edge Cases</b>
-                                    <app-edge-case-form [formControl]="$any(testCase.get('edgeCases'))"></app-edge-case-form>
+                                    <!-- Edge cases -->
+                                    <div class="mt-20">
+                                        <b>Edge Cases</b>
+                                        <app-edge-case-form [formControl]="$any(testCase.get('edgeCases'))"></app-edge-case-form>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div style="display: flex; flex-direction: column; gap: 5px;">
-                                <button nz-button (click)="moveUp(feature.get('testCases'), i)">
-                                    <i nz-icon nzType="up"></i>
-                                </button>
-                                <button nz-button (click)="moveDown(feature.get('testCases'), i)">
-                                    <i nz-icon nzType="down"></i>
-                                </button>
-                                <button nz-button nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete this?" (nzOnConfirm)="deleteTestCaseAt($any(feature.get('testCases')), i)">
-                                    <i nz-icon nzType="delete"></i>
-                                </button>
-                            </div>
-                        </div>
+                        </nz-collapse-panel>
                         }
-                        <div class="mt-20">
-                            <button nz-button (click)="addTestCase($any(feature.get('testCases')))" nzBlock>Add new Test Case</button>
-                        </div>
+                    </nz-collapse>
+                    <div class="mt-20">
+                        <button nz-button (click)="addTestCase($any(feature.get('testCases')))" nzType="link" nzBlock>
+                            <nz-icon nzType="plus-circle"></nz-icon>
+                            Add New Test Case
+                        </button>
                     </div>
                 </nz-collapse-panel>
             }
@@ -109,10 +125,11 @@
         <button nz-button style="width: 100%;" (click)="addToFeatures()">ADD FEATURE/MODULE</button>
     </div>
 
-    <div style="display: flex; flex-direction: row; justify-content: flex-end; gap: 10px;" class="mt-40">
+    <div class="flex gap-10 mt-40" style="flex-direction: row; justify-content: flex-end;">
         <button nz-button>Cancel</button>
         <button nz-button (click)="save()" nzType="primary">Submit</button>
     </div>
+</nz-card>
 </div>
 }
 

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzListModule } from 'ng-zorro-antd/list';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -18,6 +18,7 @@ import _cloneDeep from 'lodash.clonedeep';
 import { Deactivatable } from '../../../../guards/can-deactivate.guard';
 import { StepsForm } from '@qa/components/steps-form/steps-form';
 import { EdgeCaseForm } from '@qa/components/edge-case-form/edge-case-form';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 interface ITestEnvironment {
   _id?: string;
@@ -79,6 +80,8 @@ interface ITestPlanForm {
   selector: 'app-edit-test-plan',
   imports: [
     CommonModule,
+    NzCardModule,
+    FormsModule,
     NzCollapseModule,
     NzIconModule,
     NzListModule,
@@ -108,11 +111,7 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
   deletedFeatures: any[] = [];
   deletedTestCases: any[] = [];
 
-  testDataModalVisible = false;
-  testDataMode: 'new' | 'edit' = 'new';
-  selectedTestCase: FormArray | null = null;
-  testDataForm: FormGroup | any = null;
-  testDataIndex: number | undefined;
+  searchText = '';
 
   ready = false;
   readyError = false;
@@ -229,13 +228,17 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     features.removeAt(index);
   }
 
-  getSortedFeatures(features: any): any[] {
-    return features.controls.sort((a: any, b: any) => {
-      return a.controls['order'].value - b.controls['order'].value;
-    });
+  getSortedFeatures(): AbstractControl<any, any>[] {
+    const features: FormArray = this.formGroup.get('features') as FormArray;
+    return features.controls
+      .filter(control =>
+        control.value.name
+        && control.value.name.trim().toLowerCase().includes(this.searchText.trim().toLowerCase())
+      )
+      .sort((a: any, b: any) => {
+        return a.controls['order'].value - b.controls['order'].value;
+      });
   }
-
-  /*************** TEST CASES **************/
 
   addTestCase(testCases: FormArray): void {
     testCases.push(new FormGroup({
@@ -247,10 +250,11 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     }));
   }
 
-  deleteTestCaseAt(testCases: FormArray<any>, index: number): void {
-    const tc = testCases.controls[index].value;
-    if (tc._id) {
-      this.deletedTestCases.push(tc._id);
+  deleteTestCaseAt(feature: AbstractControl<any, any>, index: number): void {
+    const testCases = feature.get('testCases') as FormArray;
+    const testCase = testCases.controls[index].value;
+    if (testCase._id) {
+      this.deletedTestCases.push(testCase._id);
     }
     testCases.removeAt(index);
   }
@@ -276,13 +280,15 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     contentAfter.setValue(selected.value - 1);
   }
 
-  getSortedTestCases(testCases: FormArray<any>): any[] {
+  getSortedTestCases(feature: AbstractControl<any, any>): any[] {
+    const testCases = feature.get('testCases') as FormArray;
     return testCases.controls.sort((a: any, b: any) => {
       return a.controls['order'].value - b.controls['order'].value;
     });
   }
 
-  moveDown(testCases: FormArray<any>, index: number): void {
+  moveDown(feature: AbstractControl<any, any>, index: number): void {
+    const testCases = feature.get('testCases') as FormArray;
     const current = (testCases.controls[index] as FormGroup).controls['order'];
     if (current.value + 1 >= testCases.length) {
       return;
@@ -293,7 +299,8 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
     below.setValue(below.value - 1);
   }
 
-  moveUp(testCases: FormArray<any>, index: number): void {
+  moveUp(feature: AbstractControl<any, any>, index: number): void {
+    const testCases = feature.get('testCases') as FormArray;
     const current = (testCases.controls[index] as FormGroup).controls['order'];
     if (current.value - 1 < 0) {
       return;

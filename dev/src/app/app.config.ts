@@ -37,7 +37,8 @@ export const appConfig: ApplicationConfig = {
       NzIcon.ToolOutline,
       NzIcon.DashboardOutline,
       NzIcon.SearchOutline,
-      NzIcon.BugOutline
+      NzIcon.BugOutline,
+      NzIcon.PlusCircleOutline
     ]),
     provideHttpClient(),
     provideApollo(() => {

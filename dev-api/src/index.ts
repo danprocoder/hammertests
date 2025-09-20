@@ -7,14 +7,17 @@ import * as dotenv from 'dotenv';
 import * as jwt from 'jsonwebtoken';
 import { User, UserSession, IRequestContext } from '@qa/models';
 import { IProjectDocument, ProjectMember } from './models/project';
+import { Logger } from '@aws-lambda-powertools/logger';
 
 dotenv.config();
 
 const reqContext = async ({ req, res }: any): Promise<IRequestContext> => {
+  const logger = new Logger({ serviceName: 'qa-backend' });
+
   const authHeader = req.headers.authorization || '';
   const token = authHeader.replace(/^Bearer\s+/, '');
   if (!token) {
-    return { user: null, req, res };
+    return { user: null, req, res, logger };
   }
 
   try {
@@ -24,12 +27,12 @@ const reqContext = async ({ req, res }: any): Promise<IRequestContext> => {
     const session = await UserSession.findOne({ userId: payload.sub, token });
 
     if (!user || !session) {
-      return { user: null, req, res };
+      return { user: null, req, res, logger };
     }
 
     const project = await ProjectMember.findOne({ user: user._id }).populate('project');
     if (!project || !project.project) {
-      return { user: null, req, res };
+      return { user: null, req, res, logger };
     }
 
     return {
@@ -39,11 +42,11 @@ const reqContext = async ({ req, res }: any): Promise<IRequestContext> => {
         project: project.project as unknown as IProjectDocument
       },
       req,
-      res
+      res,
+      logger
     };
   } catch (err) {
-    console.warn('Auth error', err);
-    return { user: null, req, res };
+    return { user: null, req, res, logger };
   }
 };
 

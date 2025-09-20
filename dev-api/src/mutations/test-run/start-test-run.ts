@@ -19,10 +19,17 @@ export const startTestRunMutator = async (parent: any, args: any, { user }: IReq
   const testCaseIds = (await TestCase.find(testCaseQuery)).map(tc => tc._id);
   const sumEdgeCases = await EdgeCase.countDocuments({ testCase: { $in: testCaseIds } });
 
+  let testRunId = 1;
+  const lastTestRun = await TestRun.findOne({ planId }).sort({ createdAt: -1 });
+  if (lastTestRun && lastTestRun.id) {
+    testRunId = parseInt(lastTestRun.id.substring(3)) + 1;
+  }
+
   const testRun = await TestRun.create({
     project: user.project._id,
     user: user.user._id,
     planId,
+    id: 'TR_' + testRunId,
     environment,
     stat: {
       totalEdgeCases: sumEdgeCases,

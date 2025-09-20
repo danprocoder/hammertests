@@ -6,7 +6,8 @@ export interface ITestRunstat {
   totalBlocked: number,
   totalNeedsARetest: number,
   totalPassedWithWarnings: number,
-  totalRun: number
+  totalRun: number,
+  totalEdgeCases: number
 }
 
 export interface ITestRun {
@@ -39,6 +40,11 @@ const testRunSchema = new Schema<ITestRunDocument>({
     ref: 'TestPlan',
     required: true
   },
+  id: {
+    type: String,
+    required: true,
+    unique: true
+  },
   environment: {
     type: Schema.Types.ObjectId,
     required: true
@@ -67,6 +73,10 @@ const testRunSchema = new Schema<ITestRunDocument>({
     totalRun: {
       type: Number,
       default: 0
+    },
+    totalEdgeCases: {
+      type: Number,
+      default: 0
     }
   },
   status: {
@@ -82,7 +92,7 @@ const testRunSchema = new Schema<ITestRunDocument>({
   }],
   modulesToTest: [{
     type: Schema.Types.ObjectId,
-    defaultValue: []
+    default: []
   }]
 }, { timestamps: true });
 

@@ -110,7 +110,6 @@ export class TestRun {
   }
 
   save(planId: string, testRunId: string, testCase: ITestRunCase): Observable<MutationResult<any>> {
-    console.log(testCase);
     return this.apollo.mutate({
       mutation: gql`${jsonToGraphQLQuery({ mutation: { editTestRunCase: { __args: { planId, testRunId, testCase }, _id: true } } })}`
     });
@@ -147,12 +146,6 @@ export class TestRun {
                 order
               },
               status,
-              comment,
-              attachments,
-              stepsToReproduce {
-                _id,
-                step
-              }
             },
             feature {
               name

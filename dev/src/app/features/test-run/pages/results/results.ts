@@ -147,7 +147,6 @@ export class Results {
   showDetails(result: any) {
     this.testFeature.getTestCase(result.testCaseId).subscribe((res: any) => {
       this.selectedTestCase = { ...result, ...res.data.getTestCase };
-      console.log(this.selectedTestCase);
     });
   }
 

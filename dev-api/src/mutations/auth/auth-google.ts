@@ -5,7 +5,6 @@ import * as jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
 export const authGoogleMutator = async (parent: any, { auth }: any, context: any) => {
-  console.log(auth, context);
   const client = new OAuth2Client(process.env.GOOGLE_CLIENT_KEY);
   const ticket = await client.verifyIdToken({
     idToken: auth.credential,

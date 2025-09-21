@@ -1,5 +1,6 @@
 interface IEdgeCase {
   _id?: string;
+  code: string;
   title: string;
   expectation: string;
   order: number;
@@ -42,6 +43,7 @@ interface ITestCase {
   name: string;
   description?: string;
   order: number;
+  code: string;
   stepsToTest?: IStepToTest[];
   edgeCases: IEdgeCase[];
   dateCreated: string;

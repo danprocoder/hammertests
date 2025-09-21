@@ -24,11 +24,13 @@ export interface ITestRunstat {
 
 export interface ITestRun {
   _id: string;
+  code: string;
   planId: string;
   plan: { name: string };
   stat: ITestRunstat;
   status: 'running' | 'completed';
   testCases: ITestRunCase[];
+  modulesToTest: string[];
   overallReport?: string;
   attachment?: string[];
   createdAt?: string;
@@ -48,6 +50,7 @@ export interface IIssue {
   testCase: ITestCase;
   edgeCase: IEdgeCase;
   project: string;
+  code: string;
   user: string;
   title: string;
   description: string;

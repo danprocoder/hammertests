@@ -31,6 +31,7 @@ export class Issue {
               title
               expectation
             }
+            code
             title
             description
             status

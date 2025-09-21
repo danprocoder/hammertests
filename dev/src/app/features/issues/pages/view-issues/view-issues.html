@@ -4,6 +4,7 @@
   <nz-table #issuesTable [nzData]="issues" style="padding: 0;">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Title</th>
         <th>Feature</th>
         <th>Priority</th>
@@ -13,6 +14,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let issue of issuesTable.data">
+        <td>{{ issue.code }}</td>
         <td (click)="viewIssue(issue)">{{ issue.title }}</td>
         <td>{{ issue.feature?.name }}</td>
         <td>{{ issue.priority }}</td>
@@ -29,33 +31,44 @@
     <div class="mt-10" style="display: grid; grid-template-columns: 1fr 200px; column-gap: 20px;">
       <div>
         <div class="flex gap-20">
-          <p>Priority:<br/>
+          <p><small>ID</small><br/>
+            {{ selectedIssue?.code }}
+          </p>
+
+          <p><small>Priority</small><br/>
             <nz-select [ngModel]="selectedIssue?.priority" style="width: 120px;" (ngModelChange)="onPriorityChange($event)">
               <nz-option *ngFor="let priority of ['low', 'medium', 'high', 'critical']" [nzValue]="priority" [nzLabel]="priority"></nz-option>
             </nz-select>
           </p>
 
-          <p>Status:<br/>
+          <p><small>Status</small><br/>
             <nz-select [ngModel]="selectedIssue?.status" style="width: 120px;" (ngModelChange)="onStatusChange($event)">
               <nz-option *ngFor="let status of ['open', 'in_progress', 'closed']" [nzValue]="status" [nzLabel]="status"></nz-option>
             </nz-select>
           </p>
 
-          <p>Date Created:<br/>{{ selectedIssue?.createdAt | date: 'short' }}</p>
+          <p><small>Date Created</small><br/>
+            {{ selectedIssue?.createdAt | date: 'short' }}
+          </p>
         </div>
 
+        @if (selectedIssue?.description) {
         <div class="mt-10">
           <div style="font-weight: bold;">Description</div>
           <p style="white-space: pre-wrap;">{{ selectedIssue?.description }}</p>
         </div>
+        }
 
+        @if (selectedIssue?.stepsToReproduce?.length) {
         <div class="mt-10">
           <div style="font-weight: bold;">Steps to Reproduce</div>
           <ul>
             <li *ngFor="let step of selectedIssue?.stepsToReproduce">{{ step.step }}</li>
           </ul>
         </div>
+        }
 
+        @if (selectedIssue?.attachments?.length) {
         <div class="mt-10">
           <div style="font-weight: bold;">Attachments</div>
           <ul>
@@ -64,6 +77,7 @@
             </li>
           </ul>
         </div>
+        }
       </div>
 
       <div>

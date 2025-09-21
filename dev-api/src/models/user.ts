@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 
 interface IUser {
   firstName: string,
@@ -9,7 +9,7 @@ interface IUser {
   updatedAt: any
 };
 
-interface IUserDocument extends IUser, Document {}
+interface IUserDocument extends IUser, Document<Types.ObjectId> {}
 
 interface IUserModel extends mongoose.Model<IUserDocument> {}
 

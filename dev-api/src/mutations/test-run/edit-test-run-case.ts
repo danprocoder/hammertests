@@ -1,6 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { IRequestContext, Issue, TestCase, TestRun, TestRunCase } from "@qa/models";
 import { calTestRunStats } from '../../utils';
+import { CodeGeneratorService } from '../../services/code-generator';
 
 export const editTestRunCaseMutator = async (parent: any, args: any, context: IRequestContext) => {
   if (!context.user) {
@@ -43,12 +44,15 @@ export const editTestRunCaseMutator = async (parent: any, args: any, context: IR
         });
         edgeCase.issue = edgeCase.issue._id;
       } else {
+        const issueCode = await CodeGeneratorService.generateCode('IS', context.user.project._id);
+
         const newIssue = await Issue.create({
           project: context.user.project._id,
           user: context.user.user._id,
           feature: dbTestCase.featureId,
           testCase: dbTestCase._id,
           edgeCase: edgeCase.edgeCaseId,
+          code: issueCode,
           title: edgeCase.issue.title,
           description: edgeCase.issue.description,
           stepsToReproduce: edgeCase.issue.stepsToReproduce

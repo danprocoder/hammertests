@@ -31,3 +31,6 @@ export type { IIssue, IIssueDocument, IssueStatus, IssuePriority } from './issue
 export { Issue } from './issue';
 
 export { TestRun } from './test-run';
+
+export type { ICodeGeneratorDocument } from './code-generator';
+export { CodeGenerator } from './code-generator';

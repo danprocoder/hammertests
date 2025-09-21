@@ -5,7 +5,7 @@ export interface IProject {
   name: string;
 }
 
-export interface IProjectDocument extends IProject, Document {}
+export interface IProjectDocument extends IProject, Document<Types.ObjectId> {}
 
 export const Project = model<IProjectDocument>('Project', new Schema<IProjectDocument>({
   createdBy: { type: Schema.Types.ObjectId, ref: 'User' },

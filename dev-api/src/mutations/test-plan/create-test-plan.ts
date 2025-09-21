@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql';
-import { TestPlan, TestFeature, TestCase, EdgeCase, IRequestContext } from '@qa/models';
+import { TestPlan, TestFeature, IRequestContext } from '@qa/models';
+import { TestCaseService } from '../../services/test-case-service';
 
 type Ordered<A> = A & { order: number };
 
@@ -57,27 +58,14 @@ export const createTestPlanMutator = async (parent: any, args: CreateTestPlanArg
     });
 
     for (let tc of f.testCases) {
-      // Created the edge cases first
-      const testCase = await TestCase.create({
-        user: context.user.user._id,
-        planId: plan._id,
-        featureId: feature._id,
-        name: tc.name,
-        description: tc.description,
-        order: tc.order,
-        stepsToTest: tc.stepsToTest
-      });
-
-      const edgeCases = await EdgeCase.insertMany((tc.edgeCases ?? []).map(ec => ({
-        user: context.user?.user._id,
-        testCase: testCase._id,
-        title: ec.title,
-        expectation: ec.expectation,
-        order: ec.order
-      })));
-
-      const edgeCaseIds = edgeCases.map(ec => ec._id);
-      await testCase.updateOne({ edgeCases: edgeCaseIds });
+      await TestCaseService.createNewTestCase(
+        context.user.project._id,
+        context.user.user._id,
+        plan._id,
+        feature._id,
+        tc,
+        tc.edgeCases
+      );
     }
   }
   

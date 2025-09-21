@@ -35,7 +35,7 @@ interface IEdgeCaseFormValue extends IEdgeCase {
 })
 export class EdgeCaseForm implements ControlValueAccessor {
 
-  onChange = (value: IEdgeCase[]) => {};
+  onChange = (value: Pick<IEdgeCase, '_id' | 'title' | 'expectation' | 'order'>[]) => {};
   onTouched = () => {};
 
   edgeCases: FormArray;

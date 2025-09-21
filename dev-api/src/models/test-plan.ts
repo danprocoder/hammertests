@@ -1,4 +1,4 @@
-import { Model, model, Schema, Document } from "mongoose";
+import { Model, model, Schema, Document, Types } from "mongoose";
 
 interface ITestPlan {
   project: Schema.Types.ObjectId,
@@ -13,7 +13,7 @@ interface ITestPlan {
   }[]
 }
 
-interface ITestPlanDocument extends ITestPlan, Document {}
+interface ITestPlanDocument extends ITestPlan, Document<Types.ObjectId> {}
 
 interface ITestPlanModel extends Model<ITestPlanDocument> {}
 

@@ -3,12 +3,13 @@ import mongoose, { Model, Schema, Document, Types } from "mongoose";
 interface IEdgeCase {
   user: Types.ObjectId,
   testCase: Types.ObjectId,
+  code: string,
   title: string,
   expectation: string,
   order: number
 }
 
-interface IEdgeCaseDocument extends IEdgeCase, Document {}
+interface IEdgeCaseDocument extends IEdgeCase, Document<Types.ObjectId> {}
 
 interface IEdgeCaseModel extends Model<IEdgeCaseDocument> {}
 
@@ -21,6 +22,10 @@ const edgeCaseSchema = new Schema<IEdgeCaseDocument>({
   testCase: {
     type: Schema.Types.ObjectId,
     ref: 'TestCase',
+    required: true
+  },
+  code: {
+    type: String,
     required: true
   },
   title: {

@@ -14,6 +14,7 @@ export interface ITestRun {
   project: Types.ObjectId,
   user: Types.ObjectId,
   planId: Types.ObjectId,
+  code: string;
   environment: Types.ObjectId,
   stat: ITestRunstat,
   status: 'running' | 'finished',
@@ -40,7 +41,7 @@ const testRunSchema = new Schema<ITestRunDocument>({
     ref: 'TestPlan',
     required: true
   },
-  id: {
+  code: {
     type: String,
     required: true,
     unique: true

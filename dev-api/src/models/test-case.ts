@@ -17,13 +17,14 @@ interface ITestCase {
   user: Types.ObjectId,
   planId: Types.ObjectId,
   featureId: Types.ObjectId,
+  code: string,
   name: string,
   description: string,
   stepsToTest: ITestStep[],
   order: number
 };
 
-interface ITestCaseDocument extends ITestCase, Document {}
+interface ITestCaseDocument extends ITestCase, Document<Types.ObjectId> {}
 
 interface ITestCaseModel extends Model<ITestCaseDocument> {}
 
@@ -41,6 +42,10 @@ const testTestSchema = new Schema<ITestCaseDocument>({
   featureId: {
     type: Schema.Types.ObjectId,
     ref: 'TestFeature',
+    required: true
+  },
+  code: {
+    type: String,
     required: true
   },
   name: {

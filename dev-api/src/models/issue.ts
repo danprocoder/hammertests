@@ -9,6 +9,7 @@ interface IIssue {
   feature: Types.ObjectId,
   testCase: Types.ObjectId,
   edgeCase: Types.ObjectId,
+  code: string,
   title: string,
   description: string,
   status: IssueStatus,
@@ -45,6 +46,10 @@ const issueSchema = new Schema<IIssueDocument>({
   edgeCase: {
     type: Schema.Types.ObjectId,
     ref: 'EdgeCase',
+    required: true
+  },
+  code: {
+    type: String,
     required: true
   },
   title: {

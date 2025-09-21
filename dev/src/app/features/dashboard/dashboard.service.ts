@@ -22,6 +22,10 @@ export class DashboardService {
           inProgressIssues,
           lastTestResult {
             planId,
+            code,
+            plan {
+              name
+            },
             stat {
               totalPassed,
               totalFailed,
@@ -34,6 +38,7 @@ export class DashboardService {
           },
           recentIssues {
             _id,
+            code,
             title,
             status,
             priority,
@@ -45,6 +50,7 @@ export class DashboardService {
             plan {
               name
             },
+            code,
             stat {
               totalPassed,
               totalFailed,

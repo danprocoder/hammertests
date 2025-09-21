@@ -11,20 +11,27 @@
     </nz-card>
 
     <nz-card class="c">
-        <div>Last Test Result</div>
+        <div class="text-bold">Last Test Result</div>
 
-        <div class="mt-20">
-            <canvas #pieChartCanvas width="450" height="220"></canvas>
+        <div class="mt-10">
+            @if (data.lastTestResult) {
+            <div>
+                <span>{{data.lastTestResult.code}} &ndash;</span>
+                {{data.lastTestResult.plan.name}}
+            </div>
+            <canvas #pieChartCanvas width="450" height="220" class="mt-10"></canvas>
+            }
         </div>
     </nz-card>
 
     <nz-card class="d">
-        <div>Open Issues</div>
+        <div class="text-bold">Open Issues</div>
 
         <div class="mt-20">
             <nz-table #activeIssues [nzData]="data.recentIssues">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Title</th>
                         <th>Status</th>
                         <th>Priority</th>
@@ -34,6 +41,7 @@
                 <tbody>
                     @for (issue of activeIssues.data; track issue._id) {
                         <tr>
+                            <td>{{ issue.code }}</td>
                             <td><a [routerLink]="'/dashboard/issues'">{{ issue.title }}</a></td>
                             <td>{{ issue.status }}</td>
                             <td>{{ issue.priority }}</td>
@@ -46,12 +54,13 @@
     </nz-card>
 
     <nz-card class="e">
-        <div>Active Test Runs</div>
+        <div class="text-bold">Active Test Runs</div>
 
         <div class="mt-20">
             <nz-table #activeTestRunsTable [nzData]="data.recentTestRuns">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Plan</th>
                         <th>Started At</th>
                         <th>Progress</th>
@@ -60,6 +69,7 @@
                 <tbody>
                     @for (run of activeTestRunsTable.data; track run._id) {
                         <tr>
+                            <td>{{ run.code }}</td>
                             <td><a [routerLink]="'/dashboard/run/' + run.planId + '/' + run._id">{{ run.plan.name }}</a></td>
                             <td>{{ run.createdAt | date: 'short' }}</td>
                             <td>{{ getPercentage(run) }}%</td>

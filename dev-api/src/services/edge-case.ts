@@ -6,7 +6,7 @@ export class EdgeCaseService {
     public static async createEdgeCases(
         projectId: Types.ObjectId,
         userId: Types.ObjectId,
-        planId: string,
+        planId: Types.ObjectId,
         testCaseId: string,
         edgeCases: Pick<IEdgeCase, 'title' | 'expectation' | 'order'>[]
     ): Promise<Types.ObjectId[]> {

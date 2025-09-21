@@ -1,4 +1,4 @@
-import { Model, model, Schema, Document } from "mongoose";
+import { Model, model, Schema, Document, Types } from "mongoose";
 
 interface ITestFeature {
   user: Schema.Types.ObjectId,
@@ -9,7 +9,7 @@ interface ITestFeature {
   order: number
 }
 
-interface ITestFeatureDocument extends ITestFeature, Document {}
+interface ITestFeatureDocument extends ITestFeature, Document<Types.ObjectId> {}
 
 interface ITestFeatureModel extends Model<ITestFeatureDocument> {}
 

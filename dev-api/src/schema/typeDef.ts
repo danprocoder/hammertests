@@ -39,6 +39,7 @@ const typeDefs = gql`
 
   type TestCaseEdgeCase {
     _id: ID,
+    code: String,
     title: String!,
     expectation: String!,
     order: Int
@@ -48,6 +49,7 @@ const typeDefs = gql`
     _id: ID,
     planId: ID,
     featureId: ID,
+    code: String,
     name: String,
     description: String,
     order: Int,
@@ -83,6 +85,7 @@ const typeDefs = gql`
 
   type TestRun {
     _id: ID,
+    code: String,
     planId: String,
     plan: TestPlan,
     environment: String,
@@ -223,6 +226,7 @@ const typeDefs = gql`
     feature: TestFeature,
     testCase: TestCase,
     edgeCase: TestCaseEdgeCase,
+    code: String,
     title: String,
     description: String,
     status: String,

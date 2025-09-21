@@ -2,6 +2,8 @@ import { GraphQLError } from 'graphql';
 import { IRequestContext, TestPlan, TestFeature, TestCase, EdgeCase } from '@qa/models';
 import { Types } from 'mongoose';
 import { calTestRunStats, syncDeleted } from '../../utils';
+import { EdgeCaseService } from '../../services/edge-case';
+import { TestCaseService } from '../../services/test-case-service';
 
 type UpdateTestPlanArgs = {
   id: string,
@@ -34,42 +36,6 @@ type UpdateTestPlanArgs = {
   deletedFeatures: string[],
   deletedTestCases: string[]
 };
-
-/**
- * Helper function to create a new test case along with its edge cases
- *
- * @param userId The user creating the test case
- * @param planId The plan the test case belongs to
- * @param featureId The feature the test case belongs to
- * @param testCase The test case to create
- * @param edgeCases The edge cases to create along with the test case
- */
-const createNewTestCase = async (userId: any, planId: any, featureId: any, testCase: any, edgeCases: any[]) => {
-  const newTestCase = await TestCase.create({
-    user: userId,
-    planId,
-    featureId,
-    name: testCase.name,
-    description: testCase.description,
-    order: testCase.order,
-    stepsToTest: testCase.stepsToTest
-  });
-
-  const edgeCaseIds = [];
-  for (let ec of edgeCases ?? []) {
-    const edgeCase = await EdgeCase.create({
-      user: userId,
-      plan: planId,
-      testCase: newTestCase._id,
-      title: ec.title,
-      expectation: ec.expectation,
-      order: ec.order
-    });
-    edgeCaseIds.push(edgeCase._id);
-  }
-
-  await newTestCase.updateOne({ edgeCases: edgeCaseIds });
-}
 
 export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTestPlanArgs, context: IRequestContext) => {
   if (!context.user) {
@@ -115,16 +81,16 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
           
           for (let edgeCase of formTestCase.edgeCases ?? []) {
             if (!edgeCase._id) {
-              const newEdgeCase = await EdgeCase.create({
-                user: context.user?.user._id,
-                plan: testPlanArgs.id,
-                testCase: formTestCase._id,
-                title: edgeCase.title,
-                expectation: edgeCase.expectation,
-                order: edgeCase.order
-              });
-
-              idsToKeep.push((newEdgeCase._id as Types.ObjectId).toString());
+              const [newEdgeCaseId] = await EdgeCaseService.createEdgeCases(
+                context.user?.project._id,
+                context.user?.user._id,
+                new Types.ObjectId(testPlanArgs.id),
+                formTestCase._id,
+                [edgeCase]
+              );
+              if (newEdgeCaseId) {
+                idsToKeep.push(newEdgeCaseId.toString());
+              }
             } else {
               edgeCaseBulkWrite.push({
                 updateOne: {
@@ -144,7 +110,7 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
           }
 
           const edgeCases = await EdgeCase.find({ testCase: formTestCase._id });
-          const deleteEdgeCaseIds = edgeCases.map((item) => (item._id as Types.ObjectId).toString()).filter((_id) => !idsToKeep.includes(_id));
+          const deleteEdgeCaseIds = edgeCases.map((item) => item._id.toString()).filter((_id) => !idsToKeep.includes(_id));
           edgeCaseBulkWrite.push({
             deleteMany: {
               filter: { _id: { $in: deleteEdgeCaseIds.map(_id => new Types.ObjectId(_id)) } }
@@ -166,10 +132,11 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
           });
         } else {
           // Edge case: existing feature, new test case with new edge cases
-          await createNewTestCase(
+          await TestCaseService.createNewTestCase(
+            context.user?.project._id,
             context.user?.user._id,
-            testPlanArgs.id,
-            formFeature._id,
+            new Types.ObjectId(testPlanArgs.id),
+            new Types.ObjectId(formFeature._id),
             formTestCase,
             formTestCase?.edgeCases ?? []
           );
@@ -187,9 +154,10 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
       });
 
       for (let i = 0; i < formFeature.testCases.length; i++) {
-        await createNewTestCase(
+        await TestCaseService.createNewTestCase(
+          context.user?.project._id,
           context.user?.user._id,
-          testPlanArgs.id,
+          new Types.ObjectId(testPlanArgs.id),
           newFeature._id,
           formFeature.testCases[i],
           formFeature.testCases[i]?.edgeCases ?? []

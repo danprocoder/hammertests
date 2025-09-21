@@ -1,5 +1,5 @@
 <div *ngIf="result">
-    <div style="font-size: 24px; font-weight: bold;">{{ result.plan.name }}</div>
+    <div style="font-size: 24px; font-weight: bold;">{{ result.code }} &ndash; {{ result.plan.name }}</div>
 
     <div class="mt-40">
         <canvas #pieChartCanvas width="450" height="220"></canvas>
@@ -16,6 +16,7 @@
         <thead>
             <tr>
                 <th>Test</th>
+                <th style="max-width: 120px;">Edge Case ID</th>
                 <th>Edge Case</th>
                 <th>Expected Result</th>
                 <th>Status</th>
@@ -35,6 +36,9 @@
             </tr>
             @for(edgeCase of result.edgeCases; track edgeCase._id) {
             <tr>
+                <td class="source-code-pro" style="width: 120px; max-width: 120px;">
+                    {{ edgeCase.edgeCaseId.code }}
+                </td>
                 <td class="source-code-pro">
                     {{ edgeCase.edgeCaseId.title }}
                 </td>

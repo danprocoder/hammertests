@@ -7,11 +7,12 @@ import { uploadData } from '@aws-amplify/storage';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable } from 'rxjs';
 import { FormArray, FormGroup } from '@angular/forms';
-import { ITestRunCase, ITestRunEdgeCase, TestStatus, IIssue } from '../../../../models/test-run.model';
+import { ITestRunCase, ITestRunEdgeCase, TestStatus, IIssue, ITestRun } from '../../../../models/test-run.model';
 
 interface IDisplayTestRunEdgeCase extends IEdgeCase {
   issue: Partial<IIssue> | null;
   status: TestStatus | null;
+  code: string;
 }
 
 interface IDisplayTestRunCase {
@@ -20,6 +21,7 @@ interface IDisplayTestRunCase {
     name: string;
   },
   id: string;
+  code: string;
   name: string;
   description?: string;
   comment: string;
@@ -39,7 +41,8 @@ export class RunTestPlan {
   ready = false;
   planId: string = '';
   testRunId: string = '';
-  testRun: any;
+  testRun?: ITestRun;
+  code: string = '';
   title: string = '';
   createdAt: string = '';
   testCases: IDisplayTestRunCase[] = [];
@@ -99,10 +102,11 @@ export class RunTestPlan {
   ngOnInit() {
     this.runTestService.getTestRun(this.testRunId).subscribe(({ data: { getTestRun } }) => {
       this.testRun = getTestRun;
+      this.code = this.testRun?.code ?? '';
 
       this.featureService.getPlan(this.planId).subscribe(({ data: { testPlan } }) => {
         this.title = testPlan.name;
-        this.createdAt = this.testRun.createdAt;
+        this.createdAt = this.testRun?.createdAt ?? '';
 
         // TODO: remove this endpoint as it can be fetched with getTestRun data
         this.runTestService.getRunTestCases(this.planId, this.testRunId).subscribe(({ data: { getTestRunCases: ranTestCases } }) => {
@@ -145,6 +149,7 @@ export class RunTestPlan {
                       name: curr.name
                     },
                     id: testCase._id,
+                    code: testCase.code,
                     name: testCase.name,
                     description: testCase.description,
                     stepsToTest: testCase.stepsToTest ?? [],
@@ -199,10 +204,10 @@ export class RunTestPlan {
   // }
 
   getFilteredFeatures(features: ITestFeature[]): ITestFeature[] {
-    if (!this.testRun.modulesToTest.length) {
+    if (!this.testRun?.modulesToTest?.length) {
       return features;
     }
-    return features.filter((f) => this.testRun.modulesToTest.includes(f._id));
+    return features.filter((f) => this.testRun?.modulesToTest?.includes(f._id));
   }
 
   getPercentage(): number {

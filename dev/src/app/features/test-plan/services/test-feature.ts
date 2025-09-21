@@ -75,6 +75,7 @@ export class TestFeature {
             order,
             testCases {
               _id,
+              code,
               name,
               description,
               order,
@@ -84,6 +85,7 @@ export class TestFeature {
               },
               edgeCases {
                 _id,
+                code,
                 title,
                 expectation,
                 order

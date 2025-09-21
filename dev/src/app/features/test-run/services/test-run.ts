@@ -46,6 +46,7 @@ export class TestRun {
       query: gql`query {
         getTestRun(id: "${testRunId}")  {
           _id,
+          code,
           environment,
           modulesToTest,
           createdAt
@@ -92,6 +93,7 @@ export class TestRun {
           getTestRuns: {
             __args: { query },
             _id: true,
+            code: true,
             plan: { name: true },
             stat: {
               totalRun: true,
@@ -120,6 +122,7 @@ export class TestRun {
       query: gql`query {
         getTestRun(id: "${testRunId}") {
           _id,
+          code,
           plan {
             _id,
             name
@@ -141,6 +144,7 @@ export class TestRun {
               _id,
               edgeCaseId {
                 _id,
+                code,
                 title,
                 expectation,
                 order

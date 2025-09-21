@@ -3,6 +3,7 @@
 <nz-table #table [nzData]="results" class="mt-20">
     <thead>
         <tr>
+            <th>ID</th>
             <th *ngIf="!planId">Test Plan</th>
             <th>Duration</th>
             <th>Passed</th>
@@ -11,13 +12,17 @@
             <th>Blocked</th>
             <th>Needs a Retest</th>
             <th>Date</th>
-            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         @for (row of table.data; track row) {
         <tr>
-            <td *ngIf="!planId" style="vertical-align: top;">{{ row.plan.name }}</td>
+            <td>{{ row.code }}</td>
+            <td *ngIf="!planId" style="vertical-align: top;">
+                <a [routerLink]="'/dashboard/run/result/' + row._id">
+                {{ row.plan.name }}
+                </a>
+            </td>
             <td>{{ getDuration(row) }}</td>
             <td>{{ row.stat.totalPassed }}</td>
             <td>{{ row.stat.totalPassedWithWarnings }}</td>
@@ -25,9 +30,6 @@
             <td>{{ row.stat.totalBlocked }}</td>
             <td>{{ row.stat.totalNeedsARetest }}</td>
             <td>{{ row.createdAt | date: 'dd MMM, yyyy H:MM' }}</td>
-            <td>
-                <a [routerLink]="'/dashboard/run/result/' + row._id">View Result</a>
-            </td>
         </tr>
         }
     </tbody>

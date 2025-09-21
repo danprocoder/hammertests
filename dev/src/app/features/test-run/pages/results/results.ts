@@ -45,7 +45,7 @@ export class Results {
       this.testResults = getTestRun.testCases;
       this.tableTestResults = [...new Set(getTestRun.testCases)];
       this.blocked = this.total - this.totalRun;
-        this.cdr.detectChanges();
+      this.cdr.detectChanges();
 
       setTimeout(() => {
         this.showChart();

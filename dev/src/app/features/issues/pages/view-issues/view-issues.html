@@ -18,7 +18,7 @@
         <td (click)="viewIssue(issue)">{{ issue.title }}</td>
         <td>{{ issue.feature?.name }}</td>
         <td>{{ issue.priority }}</td>
-        <td>{{ issue.status }}</td>
+        <td><nz-tag [nzColor]="getStatusColor(issue.status)">{{ issue.status }}</nz-tag></td>
         <td>{{ issue.createdAt | date: 'short' }}</td>
       </tr>
     </tbody>
@@ -43,7 +43,7 @@
 
           <p><small>Status</small><br/>
             <nz-select [ngModel]="selectedIssue?.status" style="width: 120px;" (ngModelChange)="onStatusChange($event)">
-              <nz-option *ngFor="let status of ['open', 'in_progress', 'closed']" [nzValue]="status" [nzLabel]="status"></nz-option>
+              <nz-option *ngFor="let status of ['open', 'in_progress', 'resolved']" [nzValue]="status" [nzLabel]="status"></nz-option>
             </nz-select>
           </p>
 

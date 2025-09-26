@@ -8,6 +8,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule } from '@angular/forms';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
   selector: 'app-view-issues',
@@ -18,6 +19,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
     NzTableModule,
     NzSelectModule,
     NzButtonModule,
+    NzTagModule,
     NzCardModule
   ],
   templateUrl: './view-issues.html',
@@ -45,6 +47,14 @@ export class ViewIssues {
         console.error('Error fetching issues:', error);
       }
     });
+  }
+
+  getStatusColor(status: IIssue['status']): string {
+    return {
+      open: 'gray',
+      in_progress: 'blue',
+      resolved: 'green'
+    }[status];
   }
 
   viewIssue(issue: IIssue): void {

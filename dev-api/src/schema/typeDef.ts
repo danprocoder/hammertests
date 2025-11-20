@@ -4,6 +4,31 @@ import { DateTimeTypeDefinition } from 'graphql-scalars';
 const typeDefs = gql`
   ${DateTimeTypeDefinition}
 
+  type ProjectEnvironment {
+    _id: ID,
+    name: String,
+    url: String
+  }
+
+  type Project {
+    _id: ID,
+    name: String,
+    description: String,
+    environments: [ProjectEnvironment],
+    createdAt: DateTime
+  }
+
+  input ProjectEnvironmentInput {
+    name: String!,
+    url: String!
+  }
+
+  input ProjectInput {
+    name: String!,
+    description: String,
+    environments: [ProjectEnvironmentInput]
+  }
+
   type TestEnvironment {
     _id: ID,
     name: String,
@@ -40,6 +65,7 @@ const typeDefs = gql`
   type TestCaseEdgeCase {
     _id: ID,
     code: String,
+    precondition: String,
     title: String!,
     expectation: String!,
     order: Int
@@ -140,6 +166,7 @@ const typeDefs = gql`
   
   input TestRunEdgeCaseIssue {
     _id: ID,
+    precondition: String,
     title: String,
     description: String,
     stepsToReproduce: [TestRunStepToReproduceInput],
@@ -165,6 +192,7 @@ const typeDefs = gql`
 
   input TestCaseEdgeCaseInput {
     _id: ID,
+    precondition: String,
     title: String!,
     expectation: String,
     order: Int!
@@ -249,8 +277,25 @@ const typeDefs = gql`
     recentIssues: [Issue],
     recentTestRuns: [TestRun]
   }
+
+  type PersonalTodo {
+    _id: ID,
+    title: String,
+    dueDate: DateTime,
+    completed: Boolean,
+    createdAt: DateTime
+  }
+
+  input PersonalTodoInput {
+    title: String!,
+    completed: Boolean,
+    dueDate: DateTime
+  }
   
   type Query {
+    projects: [Project],
+    userProjects: [Project],
+    personalTodos: [PersonalTodo],
     testPlans: [TestPlan],
     testPlan(id: ID): TestPlan,
     getTestCase(id: ID): TestCase,
@@ -263,6 +308,9 @@ const typeDefs = gql`
 
   type Mutation {
     authGoogle(auth: AuthGoogleInput): UserSession,
+    createProject(project: ProjectInput): Project,
+    createPersonalTodo(todo: PersonalTodoInput): PersonalTodo,
+    editPersonalTodo(id: ID, todo: PersonalTodoInput): PersonalTodo,
     createTestPlan(name: String, description: String, environments: [EnvironmentInput], features: [TestFeatureInput]): TestPlan,
     updateTestPlan(id: ID, name: String, description: String, environments: [EnvironmentInput], features: [TestFeatureInput], deletedFeatures: [String], deletedTestCases: [String]): TestPlan,
     startTestRun(planId: ID, environment: String, variables: [TestRunVariableInput], modulesToTest: [String]): TestRun,

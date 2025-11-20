@@ -92,8 +92,9 @@
         <div class="mt-10">
           <div style="font-weight: bold;">Edgecase:</div>
           <div class="mt-5" style="display: grid; grid-template-columns: 50px 1fr;">
-            <b>If</b>{{ selectedIssue?.edgeCase?.title }}
-            <b>then</b>{{ selectedIssue?.edgeCase?.expectation }}
+            <b>Given</b>{{ selectedIssue?.edgeCase?.precondition }}<br/>
+            <b>When</b>{{ selectedIssue?.edgeCase?.title }}<br/>
+            <b>Then</b>{{ selectedIssue?.edgeCase?.expectation }}
           </div>
         </div>
       </div>

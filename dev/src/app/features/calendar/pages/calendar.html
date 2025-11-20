@@ -1,0 +1,9 @@
+<h2>Calendar</h2>
+
+<nz-calendar [(ngModel)]="date" [(nzMode)]="mode" (nzPanelChange)="panelChange($event)">
+  <ul *nzDateCell="let date" class="events">
+    @for (event of ['Event 1', 'Event 2']; track event) {
+      <li>{{ event }} on {{ date.getDate() }}/{{ date.getMonth() + 1 }}/{{ date.getFullYear() }}</li>
+    }
+  </ul>
+</nz-calendar>

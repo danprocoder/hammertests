@@ -28,6 +28,7 @@ export class Issue {
             }
             edgeCase {
               _id
+              precondition
               title
               expectation
             }

@@ -5,10 +5,19 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { Navbar } from '../navbar/navbar';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { ChangeWorkspace } from '../change-workspace/change-workspace';
 
 @Component({
   selector: 'app-container',
-  imports: [NzLayoutModule, NzCardModule, NzMenuModule, NzIconModule, RouterModule, Navbar],
+  imports: [
+    NzLayoutModule,
+    NzCardModule,
+    NzMenuModule,
+    NzIconModule,
+    RouterModule,
+    Navbar,
+    ChangeWorkspace
+  ],
   templateUrl: './container.html',
   styleUrl: './container.scss'
 })

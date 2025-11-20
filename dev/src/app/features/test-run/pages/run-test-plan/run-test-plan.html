@@ -57,10 +57,19 @@
                     <nz-list-item style="display: flex;">
                         <div style="flex: 1;">
                             <div>
-                                <b><small>If</small></b>: {{edgeCase.title}}<br/>
+                                @if (edgeCase.precondition) {
+                                <b><small>Given</small></b><br/>{{edgeCase.precondition}}<br/>
+                                }
+
+                                @if (edgeCase.title) {
+                                <b><small>When</small></b><br/>{{edgeCase.title}}<br/>
+                                }
+
+                                @if (edgeCase.expectation) {
                                 <div class="mt-5">
-                                    <b><small>Expected Result</small></b>:<br/>{{edgeCase.expectation}}
+                                    <b><small>Expected Result</small></b><br/>{{edgeCase.expectation}}
                                 </div>
+                                }
                             </div>
                         </div>
                         <div style="display: flex; gap: 10px; align-items: center;">

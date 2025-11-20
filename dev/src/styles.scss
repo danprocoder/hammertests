@@ -4,10 +4,6 @@
 @import "ng-zorro-antd/ng-zorro-antd.min.css";
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
-// @tailwind base;
-// @tailwind components;
-// @tailwind utilities;
-
 html,
 body {
     font-size: 14px;
@@ -89,9 +85,9 @@ $spacings: 5, 10, 20, 40, 80;
         flex-direction: column;
 
         @each $s in $spacings {
-        &.gap-#{$s} {
-            gap: #{$s}px;
-        }
+            &.gap-#{$s} {
+                gap: #{$s}px;
+            }
         }
     }
 

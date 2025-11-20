@@ -7,7 +7,6 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from "ng-zorro-antd/select";
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -58,6 +57,7 @@ interface ITestCase {
 
 interface IEdgeCase {
   _id: string;
+  precondition: string;
   title: string;
   expectation: string;
   order: number;
@@ -94,7 +94,7 @@ interface ITestPlanForm {
     ReactiveFormsModule,
     StepsForm,
     EdgeCaseForm
-],
+  ],
   templateUrl: './edit-test-plan.html',
   styleUrl: './edit-test-plan.scss'
 })
@@ -124,7 +124,7 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
   constructor(
     private featureService: TestFeature,
     private route: ActivatedRoute,
-    private router: Router, 
+    private router: Router,
     private message: NzMessageService
   ) {
     this.route.params.subscribe(param => {
@@ -188,6 +188,7 @@ export class EditTestPlan implements Deactivatable<EditTestPlan> {
             edgeCases: new FormControl((t.edgeCases ?? []).map((item: IEdgeCase, i: number) => ({
               _id: item._id,
               title: item.title,
+              precondition: item.precondition,
               expectation: item.expectation,
               order: item.order ?? i
             })))

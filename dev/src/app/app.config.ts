@@ -11,6 +11,29 @@ import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { Project } from './features/projects/services/project';
+import { IconDefinition } from '@ant-design/icons-angular';
+
+const icons: IconDefinition[] = [
+  NzIcon.CommentOutline,
+  NzIcon.DownloadOutline,
+  NzIcon.CaretRightOutline,
+  NzIcon.CaretRightFill,
+  NzIcon.DeleteOutline,
+  NzIcon.FileImageOutline,
+  NzIcon.MoreOutline,
+  NzIcon.InboxOutline,
+  NzIcon.FileTwoTone,
+  NzIcon.PlusOutline,
+  NzIcon.UnorderedListOutline,
+  NzIcon.HistoryOutline,
+  NzIcon.ToolOutline,
+  NzIcon.DashboardOutline,
+  NzIcon.SearchOutline,
+  NzIcon.BugOutline,
+  NzIcon.PlusCircleOutline,
+  NzIcon.TrophyOutline
+];
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,25 +44,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideNzIcons([
-      NzIcon.CommentOutline,
-      NzIcon.DownloadOutline,
-      NzIcon.CaretRightOutline,
-      NzIcon.CaretRightFill,
-      NzIcon.DeleteOutline,
-      NzIcon.FileImageOutline,
-      NzIcon.MoreOutline,
-      NzIcon.InboxOutline,
-      NzIcon.FileTwoTone,
-      NzIcon.PlusOutline,
-      NzIcon.UnorderedListOutline,
-      NzIcon.HistoryOutline,
-      NzIcon.ToolOutline,
-      NzIcon.DashboardOutline,
-      NzIcon.SearchOutline,
-      NzIcon.BugOutline,
-      NzIcon.PlusCircleOutline
-    ]),
+    provideNzIcons(icons),
     provideHttpClient(),
     provideApollo(() => {
       const httpLink = inject(HttpLink);
@@ -63,6 +68,7 @@ export const appConfig: ApplicationConfig = {
           }
         }
       };
-    })
+    }),
+    Project
   ]
 };

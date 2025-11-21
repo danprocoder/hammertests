@@ -15,10 +15,21 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
-      "@qa/components/*": ["./src/app/components/*"],
-      "@qa/test-plan/*": ["./src/app/features/test-plan/*"],
-      "@qa/test-run/*": ["./src/app/features/test-run/*"],
-      "@qa/auth/*": ["./src/app/features/auth/*"]
+      "@qa/components/*": [
+        "./src/app/components/*"
+      ],
+      "@qa/project-management/*": [
+        "./src/app/features/project-management/*"
+      ],
+      "@qa/test-plan/*": [
+        "./src/app/features/test-plan/*"
+      ],
+      "@qa/test-run/*": [
+        "./src/app/features/test-run/*"
+      ],
+      "@qa/auth/*": [
+        "./src/app/features/auth/*"
+      ]
     }
   },
   "angularCompilerOptions": {
@@ -28,7 +39,9 @@
     "typeCheckHostBindings": true,
     "strictTemplates": true
   },
-  "files": [],
+  "files": [
+    "src/polyfills.ts"
+  ],
   "references": [
     {
       "path": "./tsconfig.app.json"

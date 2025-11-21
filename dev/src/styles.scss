@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+@use "ng-zorro-antd/ng-zorro-antd.min.css";
 @use "tailwindcss";
 
-@import "ng-zorro-antd/ng-zorro-antd.min.css";
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
 html,
@@ -67,9 +67,6 @@ $spacings: 5, 10, 20, 40, 80;
 }
 
 .flex {
-    display: flex;
-    flex-direction: row;
-
     &-space-between {
         display: flex;
         flex-direction: row;
@@ -105,4 +102,12 @@ $spacings: 5, 10, 20, 40, 80;
 
 .grid {
     display: grid;
+}
+
+.ant-layout {
+    background: oklch(98.4% 0.003 247.858);
+}
+
+.text-white {
+    color: white !important;
 }

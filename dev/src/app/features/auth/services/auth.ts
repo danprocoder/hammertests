@@ -1,24 +1,18 @@
 import { Injectable } from "@angular/core";
-import { Apollo, gql } from "apollo-angular";
-import { jsonToGraphQLQuery } from "json-to-graphql-query";
-import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private apollo: Apollo) { }
-  
-  authGoogle(payload: any): Observable<any> {
-    return this.apollo.mutate({
-      mutation: gql`${jsonToGraphQLQuery({
-        mutation: {
-          authGoogle: {
-            __args: { auth: payload },
-            token: true
-          }
-        }
-      }, { pretty: true })}`
-    });
+  constructor() { }
+
+  getAccessToken(): string | null {
+    const username = localStorage.getItem('CognitoIdentityServiceProvider.51f7k8m5p1iff8hujdabed4nlb.LastAuthUser');
+
+    if (username) {
+      return localStorage.getItem(`CognitoIdentityServiceProvider.51f7k8m5p1iff8hujdabed4nlb.${username}.accessToken`);
+    }
+
+    return null;
   }
 }

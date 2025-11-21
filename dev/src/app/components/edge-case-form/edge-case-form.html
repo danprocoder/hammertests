@@ -1,9 +1,13 @@
-<nz-list [nzHeader]="''">
+<nz-list>
     @for (edgeCase of $any(edgeCases.controls); track edgeCase; let i = $index) {
         @if (edgeCase.get('edit')?.value) {
-            <div>
+            <div class="mt-20">
                 <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
-                    <label>If:</label>
+                    <label>Given:</label>
+                    <input nz-input type="text" [formControl]="edgeCase.get('precondition')" placeholder="Precondition" />
+                </nz-form-item>
+                <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
+                    <label>When:</label>
                     <textarea nz-input rows="2" [formControl]="edgeCase.get('title')" placeholder="If email is valid but password is wrong"></textarea>
                 </nz-form-item>
                 <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
@@ -21,8 +25,9 @@
             <nz-list-item style="display: grid; grid-template-columns: 20px 1fr 40px; column-gap: 20px;" (click)="makeEditable(i)">
                 <span style="font-size: 21px;">🔨</span>
                 <div class="source-code-pro">
-                    <div><b><i>{{edgeCase.get('title').value}}</i></b></div>
-                    <div>{{edgeCase.get('expectation').value}}</div>
+                    <div><b>Given:</b> {{edgeCase.get('precondition').value}}</div>
+                    <div><b>When:</b> <i>{{edgeCase.get('title').value}}</i></div>
+                    <div><b>Then:</b> {{edgeCase.get('expectation').value}}</div>
                 </div>
 
                 <div class="flex gap-10">

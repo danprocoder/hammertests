@@ -49,6 +49,7 @@ export class EdgeCaseForm implements ControlValueAccessor {
       value.forEach((data, i) => {
         this.edgeCases.push(this.fb.group({
           _id: data?._id,
+          precondition: [data.precondition || ''],
           title: [data.title, Validators.required],
           expectation: [data.expectation, Validators.required],
           order: [data.order ?? i],
@@ -65,6 +66,7 @@ export class EdgeCaseForm implements ControlValueAccessor {
       this.onChange(
         value.map((item) => ({
           ...(item._id ? { _id: item._id }: {}),
+          precondition: item.precondition,
           title: item.title,
           expectation: item.expectation,
           order: item.order
@@ -85,6 +87,7 @@ export class EdgeCaseForm implements ControlValueAccessor {
     }
 
     this.edgeCases.push(this.fb.group({
+      precondition: [''],
       title: ['', Validators.required],
       expectation: ['', Validators.required],
       order: nextOrder,
@@ -109,6 +112,7 @@ export class EdgeCaseForm implements ControlValueAccessor {
   copyToClipboard(i: number): void {
     const edgeCase = this.edgeCases.at(i).value;
     this.clipboard.copyToClipboard('edge_case', JSON.stringify({
+      precondition: edgeCase.precondition,
       title: edgeCase.title,
       expectation: edgeCase.expectation
     }));
@@ -119,6 +123,7 @@ export class EdgeCaseForm implements ControlValueAccessor {
       if (data) {
         const parsed = JSON.parse(data);
         this.edgeCases.at(i).patchValue({
+          precondition: parsed.precondition,
           title: parsed.title,
           expectation: parsed.expectation
         });

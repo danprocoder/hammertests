@@ -5,19 +5,21 @@ interface IUser {
   lastName: string,
   email: string,
   picture: string,
+  cognitoUsername: string,
   createdAt: any,
   updatedAt: any
 };
 
-interface IUserDocument extends IUser, Document<Types.ObjectId> {}
+interface IUserDocument extends IUser, Document<Types.ObjectId> { }
 
-interface IUserModel extends mongoose.Model<IUserDocument> {}
+interface IUserModel extends mongoose.Model<IUserDocument> { }
 
 const userSchema = new Schema<IUserDocument>({
   firstName: { type: String },
   lastName: { type: String },
   email: { type: String },
-  picture: { type: String }
+  picture: { type: String },
+  cognitoUsername: { type: String },
 }, { timestamps: true });
 
 const User = mongoose.model<IUserDocument, IUserModel>('User', userSchema, 'users');

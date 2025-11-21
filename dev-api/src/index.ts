@@ -4,10 +4,10 @@ import { typeDefs } from './schema/typeDef';
 import { resolvers } from './gql-resolvers';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
-import * as jwt from 'jsonwebtoken';
-import { User, UserSession, IRequestContext } from '@qa/models';
+import { User, IRequestContext } from '@qa/models';
 import { IProjectDocument, ProjectMember } from './models/project';
 import { Logger } from '@aws-lambda-powertools/logger';
+import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 dotenv.config();
 
@@ -21,12 +21,16 @@ const reqContext = async ({ req, res }: any): Promise<IRequestContext> => {
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    const props = {
+      userPoolId: 'eu-west-2_y0s01EA0l',
+      clientId: '51f7k8m5p1iff8hujdabed4nlb'
+    };
+    const verifier = CognitoJwtVerifier.create(props);
+    const payload = await verifier.verify(token, { ...props, tokenUse: 'access' });
 
-    const user = await User.findOne({ _id: payload.sub });
-    const session = await UserSession.findOne({ userId: payload.sub, token });
+    const user = await User.findOne({ cognitoUsername: payload.username });
 
-    if (!user || !session) {
+    if (!user) {
       return { user: null, req, res, logger };
     }
 
@@ -37,7 +41,6 @@ const reqContext = async ({ req, res }: any): Promise<IRequestContext> => {
 
     return {
       user: {
-        session,
         user,
         project: project.project as unknown as IProjectDocument
       },
@@ -46,6 +49,7 @@ const reqContext = async ({ req, res }: any): Promise<IRequestContext> => {
       logger
     };
   } catch (err) {
+    console.error(err);
     return { user: null, req, res, logger };
   }
 };

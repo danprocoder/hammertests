@@ -1,10 +1,9 @@
 <nz-modal [(nzVisible)]="isVisible" (nzOnCancel)="onClose()" nzTitle="Create Issue for Edge Case" nzOkText="Create Issue" (nzOnOk)="createIssue()">
     <ng-container *nzModalContent>
       <div>
-        <b>Edge Case:</b> {{ edgeCase?.title }}
-        <div style="margin-top: 10px;">
-          <b>Expected Result:</b> {{ edgeCase?.expectation }}
-        </div>
+        <b>Given</b> {{ edgeCase?.precondition }}<br/>
+        <b>When</b> {{ edgeCase?.title }}<br/>
+        <b>Then</b> {{ edgeCase?.expectation }}
       </div>
 
       <form nz-form [formGroup]="issueForm" nzLayout="vertical" class="mt-20">

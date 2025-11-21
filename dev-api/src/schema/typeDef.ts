@@ -291,11 +291,60 @@ const typeDefs = gql`
     completed: Boolean,
     dueDate: DateTime
   }
-  
+
+  type TaskLabel {
+    _id: ID,
+    name: String
+  }
+
+  input TaskLabelInput {
+    name: String
+  }
+
+  type TaskBoard {
+    _id: ID,
+    name: String,
+    summary: String,
+    createdAt: DateTime
+  }
+
+  input TaskBoardInput {
+    name: String,
+    summary: String,
+  }
+
+  type Task {
+    _id: ID,
+    type: String,
+    title: String,
+    description: String,
+    dueDate: DateTime,
+    status: String,
+    labels: [TaskLabel],
+    createdAt: DateTime
+  }
+
+  input TaskInput {
+    board: ID,
+    type: String,
+    title: String,
+    description: String,
+    dueDate: String,
+    status: String,
+    labels: [ID]
+  }
+
+  input TaskQueryInput {
+    board: ID
+  }
+
   type Query {
     projects: [Project],
     userProjects: [Project],
     personalTodos: [PersonalTodo],
+    taskBoards: [TaskBoard],
+    backlog: [Task],
+    tasks(query: TaskQueryInput): [Task],
     testPlans: [TestPlan],
     testPlan(id: ID): TestPlan,
     getTestCase(id: ID): TestCase,
@@ -311,6 +360,9 @@ const typeDefs = gql`
     createProject(project: ProjectInput): Project,
     createPersonalTodo(todo: PersonalTodoInput): PersonalTodo,
     editPersonalTodo(id: ID, todo: PersonalTodoInput): PersonalTodo,
+    createBoard(board: TaskBoardInput): TaskBoard,
+    createTask(task: TaskInput): Task,
+    editTask(id: ID, task: TaskInput): Task,
     createTestPlan(name: String, description: String, environments: [EnvironmentInput], features: [TestFeatureInput]): TestPlan,
     updateTestPlan(id: ID, name: String, description: String, environments: [EnvironmentInput], features: [TestFeatureInput], deletedFeatures: [String], deletedTestCases: [String]): TestPlan,
     startTestRun(planId: ID, environment: String, variables: [TestRunVariableInput], modulesToTest: [String]): TestRun,

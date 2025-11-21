@@ -49,11 +49,15 @@ export const appConfig: ApplicationConfig = {
     provideApollo(() => {
       const httpLink = inject(HttpLink);
 
-      const ctx = setContext((_, { headers }) => {
-        const token = localStorage.getItem('token');
+      const ctx = setContext((req, defaultContext) => {
+        const username = localStorage.getItem('CognitoIdentityServiceProvider.51f7k8m5p1iff8hujdabed4nlb.LastAuthUser');
+        const token = username
+          ? localStorage.getItem(`CognitoIdentityServiceProvider.51f7k8m5p1iff8hujdabed4nlb.${username}.accessToken`)
+          : null;
+
         return {
           headers: {
-            ...headers,
+            ...defaultContext['headers'],
             Authorization: token ? 'Bearer ' + token : ''
           }
         };

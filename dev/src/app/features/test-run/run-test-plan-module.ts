@@ -9,23 +9,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { TestStatus } from '@qa/components/test-status/test-status';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import { TestCaseDescription } from '@qa/components/test-case-description/test-case-description';
 import { RunTestHistory } from '@qa/test-run/pages/run-test-history/run-test-history';
-import { DurationCounter } from "@qa/components/duration-counter/duration-counter";
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzAffixModule } from 'ng-zorro-antd/affix';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { AuthGuard } from '../../guards/auth.guard';
-import { CreateEdgeCaseIssueModal } from '../../components/create-edge-case-issue-modal/create-edge-case-issue-modal';
+import { CreateEdgeCaseIssueModal } from '../../shared/components/create-edge-case-issue-modal/create-edge-case-issue-modal';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { DurationCounter, TestCaseDescription, TestStatus } from '../../shared/components';
 
 const routes: Route[] = [
   {
@@ -81,6 +78,6 @@ const routes: Route[] = [
     ReactiveFormsModule,
     DurationCounter,
     CreateEdgeCaseIssueModal
-]
+  ]
 })
 export class RunTestPlanModule { }

@@ -1,0 +1,13 @@
+<div style="width: 100%;display: flex;align-items: center;justify-content: flex-end;">
+  @if (user$ | async; as user) {
+  <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" class="flex items-center gap-2 text-white">
+    <img [src]="''" style="width: 30px; height: 30px; border-radius: 50%;" />
+    {{ user.firstName }}
+  </a>
+  <nz-dropdown-menu #userMenu="nzDropdownMenu">
+    <ul nz-menu>
+      <li nz-menu-item>Logout</li>
+    </ul>
+  </nz-dropdown-menu>
+  }
+</div>

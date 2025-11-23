@@ -1,0 +1,14 @@
+$sidebar-width: 200px;
+
+.top-level-layout {
+    padding-left: $sidebar-width;
+    min-height: 100vh;
+
+    nz-sider {
+        left: 0;
+        position: fixed;
+        z-index: 1000;
+        width: $sidebar-width !important;
+        height: 100vh;
+    }
+}

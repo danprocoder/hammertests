@@ -1,4 +1,4 @@
-<nz-layout style="min-height: 100vh;">
+<nz-layout class="top-level-layout">
   <nz-sider>
     <div style="height: 64px; padding-left: 15px; display: flex; align-items: center;">
       <a routerLink="/dashboard">Hammertests</a>
@@ -6,32 +6,32 @@
 
     <app-change-workspace></app-change-workspace>
 
-    <ul nz-menu nzMode="inline" nzTheme="dark">
+    <ul nz-menu nzMode="inline" nzTheme="dark" class="mt-2">
       <li nz-menu-item routerLink="/dashboard">
-        <i nz-icon nzType="dashboard"></i>
+        <fa-icon [icon]="faGauge"></fa-icon>
         <span>Dashboard</span>
       </li>
       <li nz-menu-item routerLink="/dashboard/todo">
-        <i nz-icon nzType="check"></i>
-        <span>To-Do</span>
+        <fa-icon [icon]="faListCheck"></fa-icon>
+        <span>Personal To-Do</span>
       </li>
       <li nz-menu-item routerLink="/dashboard/calendar">
-        <i nz-icon nzType="calendar"></i>
+        <fa-icon [icon]="faCalendar"></fa-icon>
         <span>Calendar</span>
       </li>
 
       <li nz-submenu nzIcon="tool" nzTitle="Project Management">
         <ul>
           <li nz-menu-item routerLink="/dashboard/pm/tasks">
-            <i nz-icon nzType="check"></i>
+            <fa-icon [icon]="faBarsProgress"></fa-icon>
             <span>Tasks</span>
           </li>
           <li nz-menu-item routerLink="/dashboard/pm/backlog">
-            <i nz-icon nzType="check"></i>
+            <fa-icon [icon]="faClipboardList"></fa-icon>
             <span>Backlog</span>
           </li>
           <li nz-menu-item routerLink="/dashboard/pm/milestones">
-            <i nz-icon nzType="trophy"></i>
+            <fa-icon [icon]="faBullseye"></fa-icon>
             <span>Milestones</span>
           </li>
         </ul>
@@ -40,15 +40,15 @@
       <li nz-submenu nzOpen nzIcon="tool" nzTitle="Test Management">
         <ul>
           <li nz-menu-item routerLink="/dashboard/plans">
-            <i nz-icon nzType="tool"></i>
+            <fa-icon [icon]="faClipboardList"></fa-icon>
             <span>Test Plan</span>
           </li>
           <li nz-menu-item routerLink="/dashboard/run/history">
-            <i nz-icon nzType="history"></i>
+            <fa-icon [icon]="faSquarePollHorizontal"></fa-icon>
             <span>Test Run History</span>
           </li>
           <li nz-menu-item routerLink="/dashboard/issues">
-            <i nz-icon nzType="bug"></i>
+            <fa-icon [icon]="faBug"></fa-icon>
             <span>Issues</span>
           </li>
         </ul>

@@ -1,6 +1,7 @@
 interface IEdgeCase {
   _id?: string;
   code: string;
+  precondition: string;
   title: string;
   expectation: string;
   order: number;
@@ -32,6 +33,7 @@ interface ITestFeature {
   _id: string;
   planId: string;
   name: string;
+  order: number;
   description?: string;
   testCases?: ITestCase[];
   dateCreated: string;

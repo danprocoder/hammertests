@@ -6,8 +6,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
-import { IIssue } from '../../models/test-run.model';
-import { StepsForm } from '@qa/components/steps-form/steps-form';
+import { IIssue } from '../../../models/test-run.model';
+import { StepsForm } from '..';
 
 @Component({
   selector: 'app-create-edge-case-issue-modal',

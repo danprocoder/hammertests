@@ -35,8 +35,8 @@ interface IEdgeCaseFormValue extends IEdgeCase {
 })
 export class EdgeCaseForm implements ControlValueAccessor {
 
-  onChange = (value: Pick<IEdgeCase, '_id' | 'title' | 'expectation' | 'order'>[]) => {};
-  onTouched = () => {};
+  onChange = (value: Pick<IEdgeCase, '_id' | 'title' | 'expectation' | 'order'>[]) => { };
+  onTouched = () => { };
 
   edgeCases: FormArray;
 
@@ -61,11 +61,11 @@ export class EdgeCaseForm implements ControlValueAccessor {
 
   registerOnChange(fn: any) {
     this.onChange = fn;
-    
+
     this.edgeCases.valueChanges.subscribe((value: IEdgeCaseFormValue[]) =>
       this.onChange(
         value.map((item) => ({
-          ...(item._id ? { _id: item._id }: {}),
+          ...(item._id ? { _id: item._id } : {}),
           precondition: item.precondition,
           title: item.title,
           expectation: item.expectation,

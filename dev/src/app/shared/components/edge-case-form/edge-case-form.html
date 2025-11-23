@@ -1,0 +1,51 @@
+<div class="border-1 rounded-lg border-slate-200">
+    @for (edgeCase of $any(edgeCases.controls); track edgeCase; let i = $index) {
+    @if (edgeCase.get('edit')?.value) {
+    <div class="mt-20 p-4">
+        <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
+            <label>Given</label>
+            <input nz-input type="text" [formControl]="edgeCase.get('precondition')" placeholder="Precondition" />
+        </nz-form-item>
+        <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
+            <label>When</label>
+            <textarea nz-input rows="2" [formControl]="edgeCase.get('title')"
+                placeholder="If email is valid but password is wrong"></textarea>
+        </nz-form-item>
+        <nz-form-item style="display: grid; grid-template-columns: 46px 1fr;">
+            <label>Then</label>
+            <textarea nz-input rows="2" [formControl]="edgeCase.get('expectation')" placeholder="show error"></textarea>
+        </nz-form-item>
+    </div>
+    <div class="mt-5 flex justify-end gap-10 p-4">
+        @if (existsInClipboard()) {
+        <button nz-button nzType="default" (click)="pasteFromClipboard(i)">Paste</button>
+        }
+        <button nz-button nzType="primary" (click)="saveEdgeCase(i)" [disabled]="!edgeCase.valid">Save</button>
+    </div>
+    } @else {
+    <div class="flex p-4 gap-10" (click)="makeEditable(i)">
+        <div class="source-code-pro">
+            <div><b class="font-semibold w-25"
+                    style="display: inline-block;">Given</b>{{edgeCase.get('precondition').value}}</div>
+            <div><b class="font-semibold w-25"
+                    style="display: inline-block;">When</b><i>{{edgeCase.get('title').value}}</i></div>
+            <div><b class="font-semibold w-25"
+                    style="display: inline-block;">Then</b>{{edgeCase.get('expectation').value}}</div>
+        </div>
+
+        <div class="flex gap-10">
+            <button nz-button nzType="link" (click)="copyToClipboard(i); $event.stopPropagation()">
+                <nz-icon nzType="copy"></nz-icon>
+            </button>
+            <button nz-button nzType="link" (click)="deleteNewEdgeCase(i); $event.stopPropagation()">
+                <nz-icon nzType="delete"></nz-icon>
+            </button>
+        </div>
+    </div>
+    }
+
+    <nz-divider></nz-divider>
+    }
+</div>
+
+<button nz-button nzType="dashed" (click)="addNewEdgeCaseInput()" nzBlock class="mt-20">🔨 Add Edge Case</button>

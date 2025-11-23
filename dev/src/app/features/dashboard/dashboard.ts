@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { DashboardService, IDashboardData } from './dashboard.service';
 import { ITestRun } from '../../models/test-run.model';
 import { Chart } from 'chart.js/auto';
+import { Project } from '@qa/projects/services/project';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,12 +14,18 @@ export class Dashboard {
   data: IDashboardData | null = null;
   @ViewChild('pieChartCanvas', { static: false }) pieChartCanvas?: ElementRef<HTMLCanvasElement>;
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(private dashboardService: DashboardService, private projectService: Project) { }
 
   ngOnInit(): void {
+    this.projectService.project$.subscribe(project => {
+      this.getDashboardData();
+    });
+  }
+
+  getDashboardData(): void {
     this.dashboardService.getDashboardData().subscribe(({ data }: any) => {
       this.data = data.dashboard;
-      
+
       setTimeout(() => {
         this.showChart(this.data?.lastTestResult?.stat!);
       }, 250);

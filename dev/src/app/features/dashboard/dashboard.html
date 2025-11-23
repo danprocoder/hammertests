@@ -28,25 +28,27 @@
         <div class="text-bold">Open Issues</div>
 
         <div class="mt-20">
-            <nz-table #activeIssues [nzData]="data.recentIssues">
+            <nz-table #activeIssues [nzData]="data.recentIssues" [nzFrontPagination]="false">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Title</th>
                         <th>Status</th>
                         <th>Priority</th>
-                        <th>Created At</th>
                     </tr>
                 </thead>
                 <tbody>
                     @for (issue of activeIssues.data; track issue._id) {
-                        <tr>
-                            <td>{{ issue.code }}</td>
-                            <td><a [routerLink]="'/dashboard/issues'">{{ issue.title }}</a></td>
-                            <td>{{ issue.status }}</td>
-                            <td>{{ issue.priority }}</td>
-                            <td>{{ issue.createdAt | date: 'short' }}</td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <span style="text-wrap: nowrap"
+                                class="font-semibold bg-indigo-500 text-white rounded-md text-sm px-2 py-1">{{
+                                issue.code }}</span>
+                        </td>
+                        <td><a [routerLink]="'/dashboard/issues'">{{ issue.title }}</a></td>
+                        <td>{{ issue.status }}</td>
+                        <td>{{ issue.priority }}</td>
+                    </tr>
                     }
                 </tbody>
             </nz-table>
@@ -57,23 +59,26 @@
         <div class="text-bold">Active Test Runs</div>
 
         <div class="mt-20">
-            <nz-table #activeTestRunsTable [nzData]="data.recentTestRuns">
+            <nz-table #activeTestRunsTable [nzData]="data.recentTestRuns" [nzFrontPagination]="false">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Plan</th>
-                        <th>Started At</th>
                         <th>Progress</th>
                     </tr>
                 </thead>
                 <tbody>
                     @for (run of activeTestRunsTable.data; track run._id) {
-                        <tr>
-                            <td>{{ run.code }}</td>
-                            <td><a [routerLink]="'/dashboard/run/' + run.planId + '/' + run._id">{{ run.plan.name }}</a></td>
-                            <td>{{ run.createdAt | date: 'short' }}</td>
-                            <td>{{ getPercentage(run) }}%</td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <span style="text-wrap: nowrap"
+                                class="font-semibold bg-indigo-500 text-white rounded-md text-sm px-2 py-1">{{
+                                run.code }}</span>
+                        </td>
+                        <td><a [routerLink]="'/dashboard/run/' + run.planId + '/' + run._id">{{ run.plan.name }}</a>
+                        </td>
+                        <td>{{ getPercentage(run) }}%</td>
+                    </tr>
                     }
             </nz-table>
         </div>

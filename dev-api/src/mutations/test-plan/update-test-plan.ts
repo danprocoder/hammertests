@@ -28,6 +28,7 @@ type UpdateTestPlanArgs = {
       edgeCases: {
         _id?: string,
         title: string,
+        precondition: string,
         expectation: string,
         order: number
       }[]
@@ -97,6 +98,7 @@ export const updateTestPlanMutator = async (parent: any, testPlanArgs: UpdateTes
                   filter: { _id: edgeCase._id, testCase: formTestCase._id },
                   update: {
                     $set: {
+                      precondition: edgeCase.precondition,
                       title: edgeCase.title,
                       expectation: edgeCase.expectation,
                       order: edgeCase.order

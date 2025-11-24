@@ -4,6 +4,7 @@ interface IEdgeCase {
   user: Types.ObjectId,
   testCase: Types.ObjectId,
   code: string,
+  precondition: string,
   title: string,
   expectation: string,
   order: number
@@ -25,6 +26,10 @@ const edgeCaseSchema = new Schema<IEdgeCaseDocument>({
     required: true
   },
   code: {
+    type: String,
+    required: true
+  },
+  precondition: {
     type: String,
     required: true
   },

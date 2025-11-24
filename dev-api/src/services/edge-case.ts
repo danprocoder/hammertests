@@ -1,6 +1,6 @@
 import { EdgeCase, IEdgeCase } from "@qa/models";
 import { Types } from "mongoose";
-import { CodeGeneratorService } from "./code-generator";
+import { CodeGeneratorService } from "@qa/shared";
 
 export class EdgeCaseService {
     public static async createEdgeCases(
@@ -8,7 +8,7 @@ export class EdgeCaseService {
         userId: Types.ObjectId,
         planId: Types.ObjectId,
         testCaseId: string,
-        edgeCases: Pick<IEdgeCase, 'title' | 'expectation' | 'order'>[]
+        edgeCases: Pick<IEdgeCase, 'precondition' | 'title' | 'expectation' | 'order'>[]
     ): Promise<Types.ObjectId[]> {
         const ids: Types.ObjectId[] = [];
         for (let ec of edgeCases) {
@@ -19,6 +19,7 @@ export class EdgeCaseService {
                 plan: planId,
                 testCase: testCaseId,
                 code: edgeCaseCode,
+                precondition: ec.precondition,
                 title: ec.title,
                 expectation: ec.expectation,
                 order: ec.order

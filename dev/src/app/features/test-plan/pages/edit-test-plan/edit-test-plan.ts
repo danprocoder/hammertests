@@ -15,9 +15,8 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { CommonModule } from '@angular/common';
 import _cloneDeep from 'lodash.clonedeep';
 import { Deactivatable } from '../../../../guards/can-deactivate.guard';
-import { StepsForm } from '@qa/components/steps-form/steps-form';
-import { EdgeCaseForm } from '@qa/components/edge-case-form/edge-case-form';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { EdgeCaseForm, StepsForm } from '@qa/components';
 
 interface ITestEnvironment {
   _id?: string;

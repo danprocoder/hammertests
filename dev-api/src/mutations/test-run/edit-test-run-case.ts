@@ -1,14 +1,14 @@
 import { GraphQLError } from 'graphql';
 import { IRequestContext, Issue, TestCase, TestRun, TestRunCase } from "@qa/models";
 import { calTestRunStats } from '../../utils';
-import { CodeGeneratorService } from '../../services/code-generator';
+import { CodeGeneratorService } from '@qa/shared';
 
 export const editTestRunCaseMutator = async (parent: any, args: any, context: IRequestContext) => {
   if (!context.user) {
     throw new GraphQLError('You must be logged in', {
       extensions: {
         code: 'UNAUTHENTICATED'
-      } 
+      }
     });
   }
 
@@ -25,7 +25,7 @@ export const editTestRunCaseMutator = async (parent: any, args: any, context: IR
     context.logger.error('Test case not found on test run case edit', { testRunCaseId: testRunCase.testCaseId, planId });
     throw new GraphQLError('Test case not found');
   }
-  
+
   let runTc = await TestRunCase.findOne({
     user: context.user.user._id,
     planId,

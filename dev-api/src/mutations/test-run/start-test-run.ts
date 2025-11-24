@@ -1,13 +1,13 @@
 import { GraphQLError } from 'graphql';
 import { EdgeCase, IRequestContext, TestCase, TestPlan, TestRun } from "@qa/models";
-import { CodeGeneratorService } from '../../services/code-generator';
+import { CodeGeneratorService } from '@qa/shared';
 
 export const startTestRunMutator = async (parent: any, args: any, { user }: IRequestContext) => {
   if (!user) {
     throw new GraphQLError('You must be logged in', {
       extensions: {
         code: 'UNAUTHENTICATED'
-      } 
+      }
     });
   }
 

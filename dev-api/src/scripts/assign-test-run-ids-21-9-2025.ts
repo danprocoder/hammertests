@@ -1,7 +1,7 @@
 import { CodeGenerator, Project, TestRun } from "@qa/models";
 import mongoose from "mongoose";
 import * as dotenv from 'dotenv';
-import { CodeGeneratorService } from "../services/code-generator";
+import { CodeGeneratorService } from "../shared/services/code-generator";
 
 dotenv.config();
 

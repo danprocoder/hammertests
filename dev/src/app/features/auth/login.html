@@ -1,5 +1,12 @@
 <div class="flex-1 bg-blue-900 h-full"></div>
 
 <div class="w-150">
-    <amplify-authenticator></amplify-authenticator>
+    <div>
+        @if (error) {
+            <p class="text-red-500 mb-2">{{ error }}</p>
+        }
+        <button (click)="loginWithGoogle()" [disabled]="loading">
+            {{ loading ? 'Loading...' : 'Login with Google' }}
+        </button>
+    </div>
 </div>

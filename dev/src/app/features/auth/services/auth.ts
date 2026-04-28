@@ -1,18 +1,53 @@
 import { Injectable } from "@angular/core";
 
+const TOKEN_KEY = 'access_token';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  baseUrl = 'https://pmv2api-development-live.up.railway.app';
+
   constructor() { }
 
   getAccessToken(): string | null {
-    const username = localStorage.getItem('CognitoIdentityServiceProvider.51f7k8m5p1iff8hujdabed4nlb.LastAuthUser');
+    return localStorage.getItem(TOKEN_KEY);
+  }
 
-    if (username) {
-      return localStorage.getItem(`CognitoIdentityServiceProvider.51f7k8m5p1iff8hujdabed4nlb.${username}.accessToken`);
+  setAccessToken(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
+  }
+
+  clearAccessToken(): void {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getAccessToken();
+  }
+
+  async getGoogleLoginUrl(): Promise<string> {
+    const response = await fetch(`${this.baseUrl}/oauth/google/login-url`);
+    if (!response.ok) {
+      throw new Error('Failed to get Google login URL');
     }
+    const data = await response.json();
+    return data.url ?? data;
+  }
 
-    return null;
+  async verifyGoogleOauth(params: { code: string; state: string; iss: string; scope: string }): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/oauth/google/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+    if (!response.ok) {
+      throw new Error('Google OAuth verification failed');
+    }
+    const data = await response.json();
+    const token = data.access_token ?? data.token ?? data;
+    if (typeof token === 'string') {
+      this.setAccessToken(token);
+    }
   }
 }

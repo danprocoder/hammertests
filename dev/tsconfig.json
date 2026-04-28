@@ -15,8 +15,8 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
-      "@qa/components/*": [
-        "./src/app/components/*"
+      "@qa/components": [
+        "./src/app/shared/components/index.ts"
       ],
       "@qa/project-management/*": [
         "./src/app/features/project-management/*"
@@ -29,6 +29,12 @@
       ],
       "@qa/auth/*": [
         "./src/app/features/auth/*"
+      ],
+      "@qa/user": [
+        "./src/app/features/user/index.ts"
+      ],
+      "@qa/projects/*": [
+        "./src/app/features/projects/*"
       ]
     }
   },

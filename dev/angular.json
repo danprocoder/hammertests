@@ -31,8 +31,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/@aws-amplify/ui-angular/theme.css"
+              "node_modules/@aws-amplify/ui-angular/theme.css",
+              "src/styles.scss"
             ]
           },
           "configurations": {

@@ -1,26 +1,47 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { AmplifyAuthenticatorModule } from '@aws-amplify/ui-angular';
-import { getCurrentUser } from 'aws-amplify/auth';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from './services/auth';
 
 @Component({
   selector: 'app-login',
-  imports: [
-    AmplifyAuthenticatorModule
-  ],
+  imports: [],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
 export class Login {
-  constructor(private router: Router) { }
+  error: string | null = null;
+  loading = false;
+
+  constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService) { }
 
   async ngOnInit(): Promise<void> {
-    try {
-      const user = await getCurrentUser();
-      if (user) {
+    const params = this.route.snapshot.queryParams;
+    if (params['code'] && params['state'] && params['iss'] && params['scope']) {
+      this.loading = true;
+      try {
+        await this.authService.verifyGoogleOauth({
+          code: params['code'],
+          state: params['state'],
+          iss: params['iss'],
+          scope: params['scope'],
+        });
         this.router.navigate(['/dashboard']);
+      } catch (e) {
+        this.error = 'Login failed. Please try again.';
+        this.loading = false;
       }
-    } catch (err) { }
+    }
+  }
+
+  async loginWithGoogle(): Promise<void> {
+    this.loading = true;
+    this.error = null;
+    try {
+      const url = await this.authService.getGoogleLoginUrl();
+      window.location.href = url;
+    } catch (e) {
+      this.error = 'Could not reach login service. Please try again.';
+      this.loading = false;
+    }
   }
 }

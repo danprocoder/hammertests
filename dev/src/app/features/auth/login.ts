@@ -25,7 +25,9 @@ export class Login {
           iss: params['iss'],
           scope: params['scope'],
         });
-        this.router.navigate(['/dashboard']);
+
+        this.router.navigate(['/onboarding']);
+        // this.router.navigate(['/dashboard']);
       } catch (e) {
         this.error = 'Login failed. Please try again.';
         this.loading = false;
@@ -37,8 +39,8 @@ export class Login {
     this.loading = true;
     this.error = null;
     try {
-      const url = await this.authService.getGoogleLoginUrl();
-      window.location.href = url;
+      const res = await this.authService.getGoogleLoginUrl();
+      window.location.href = res.data.url;
     } catch (e) {
       this.error = 'Could not reach login service. Please try again.';
       this.loading = false;

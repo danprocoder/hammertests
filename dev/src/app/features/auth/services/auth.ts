@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { environment } from "../../../../environments/environment";
 
 const TOKEN_KEY = 'access_token';
 
@@ -6,7 +7,7 @@ const TOKEN_KEY = 'access_token';
   providedIn: 'root'
 })
 export class AuthService {
-  baseUrl = 'https://pmv2api-development-live.up.railway.app';
+  baseUrl = environment.apiUrl;
 
   constructor() { }
 
@@ -26,7 +27,7 @@ export class AuthService {
     return !!this.getAccessToken();
   }
 
-  async getGoogleLoginUrl(): Promise<string> {
+  async getGoogleLoginUrl(): Promise<{ data: { url: string } }> {
     const response = await fetch(`${this.baseUrl}/oauth/google/login-url`);
     if (!response.ok) {
       throw new Error('Failed to get Google login URL');
@@ -44,8 +45,8 @@ export class AuthService {
     if (!response.ok) {
       throw new Error('Google OAuth verification failed');
     }
-    const data = await response.json();
-    const token = data.access_token ?? data.token ?? data;
+    const res = await response.json();
+    const token = res.data.token;
     if (typeof token === 'string') {
       this.setAccessToken(token);
     }

@@ -1,7 +1,0 @@
-<nz-select>
-  @for (workspace of workspaces; track workspace._id) {
-    <nz-option [nzValue]="workspace._id" [nzLabel]="workspace.name"></nz-option>
-  }
-</nz-select>
-
-<a [routerLink]="'/dashboard/projects'">Manage Workspaces</a>
